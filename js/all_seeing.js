@@ -39,6 +39,9 @@ var CCGameClass = function ()
 			//"industry" : [], "politics" : [], "media" : []
 		}
 	};
+	this.winShown = false;
+	this.isAutoSaveOn = true;
+	this.lastSaveDateTime = new Date();
 	
 	// Constants, Lookups
 	this.sectorArray = ["industry", "politics", "media"];
@@ -134,6 +137,13 @@ var CCGameClass = function ()
 					o.total[o.flow.to] += (flowSpeed * o.flow.efficiency);
 				}
 			}
+			// Check for auto-save
+			if (o.isAutoSaveOn) {
+				var now = new Date();
+				if ((now - o.lastSaveDateTime) > 10000) {
+					o.saveGame();
+				}
+			}
 		}
 		
 	
@@ -178,9 +188,18 @@ var CCGameClass = function ()
 			totalControlled = this.totalPopulation;
 		}
 		var progressPercent = (totalControlled / this.totalPopulation) * 100;
+		if (progressPercent < 0) {
+			progressPercent = Math.round( progressPercent * 100000 ) / 100000;
+		} else {
+			progressPercent = Math.round( progressPercent * 10 ) / 10;
+		}
 		this.$progressVal.html(progressPercent + "%");
 		this.$progressBar.html('<div style="width: ' + progressPercent + '%"></div>');
-	
+		
+		if (progressPercent == 100 && !this.winShown) {
+			alert("Congratulations, our conspiracy has dominated the world!");
+			this.winShown = true;
+		}
 	}
 	
 	this.displayPerSecondNumbers = function () {
@@ -201,10 +220,19 @@ var CCGameClass = function ()
 		$elt.html(this.getDisplayNumber(n));
 	}
 	
-	this.getDisplayNumber = function(n) {
-		if (n >= 5) n = parseInt(n);
-		else n = Math.round( n * 10 ) / 10;
-		return n.toLocaleString('en');
+	this.getDisplayNumber = function(n , addK) 
+	{
+		if (n < 10) {
+			n = Math.round( n * 10 ) / 10;
+		} else if (n > 99999 && typeof addK === 'boolean' && addK) {
+			n = Math.round(n / 1000);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+			n += "k";
+		} else {
+			n = parseInt(n);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+		}
+		return n;
 	}
 	
 	this.writeUpgrades = function () {
@@ -245,13 +273,15 @@ var CCGameClass = function ()
 			for (var valueType in upgrade.baseCost) {
 				var finalCost = this.calcCost(upgrade, upgradeCount, valueType);
 				h += '<div class="cost val">'
-					+ this.getDisplayNumber(finalCost)
+					+ this.getDisplayNumber(finalCost, true)
 					+ ' ' + this.shortDisplayValueTypes[valueType]
 					+ '</div>'
 				;
 			}
 			h += '</button>'
-				+ '<div class="count">' + upgradeCount + '</div>'
+				+ '<div class="count">' 
+				+ ((upgradeCount == 0) ? '-' : upgradeCount)
+				+ '</div>'
 				+ '</div>' // endof front
 				+ '<div class="back">'
 			;
@@ -541,6 +571,8 @@ var CCGameClass = function ()
 		o.$progressVal = $('section.progress .progressVal');
 		o.$progressBar = $('section.progress .progressBar');
 		
+		o.$saveNotice = $('.saveNotice');
+		
 		$indClicker.click(function(e){	o.industryClick(); });
 		$polClicker.click(function(e){	o.politicsClick(); });
 		$medClicker.click(function(e){	o.mediaClick(); });
@@ -580,6 +612,10 @@ var CCGameClass = function ()
 			var x = o.toggleSound();
 			o.notify("Sound turned " + ((x) ? "ON" : "OFF"));
 		});
+		$('.toggleAutoSave').click(function(e){
+			o.isAutoSaveOn = !o.isAutoSaveOn;
+			o.notify("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
+		});		
 		
 		/* Intro */
 		$('.openWalkthru').click(function(e){
@@ -696,9 +732,15 @@ var CCGameClass = function ()
 		localStorage.setItem("total", JSON.stringify(this.total));
 		localStorage.setItem("isSoundOn", JSON.stringify(this.isSoundOn));
 		
+		this.lastSaveDateTime = new Date();
+		
 		if (typeof showNotice === 'boolean') { 
 			if (showNotice) this.notify("Game has been saved to this browser. Your game will be automatically loaded when you return.");
 		}
+		var $sn = this.$saveNotice;
+		$sn.show(400, function(){
+			$sn.fadeOut(1000);
+		});
 	}
 	
 	this.deleteGame = function() 
@@ -796,8 +838,18 @@ var CCGameClass = function ()
 		}
 	}
 	
+	//========================================= Helpers
+	
 	this.roll1d = function (sides) {
 		return (Math.floor(Math.random()*sides) + 1);
+	}	
+	
+	this.getCommaSeparatedNumber = function (val) {
+		// From: http://stackoverflow.com/a/12947816/1766230
+		while (/(\d+)(\d{3})/.test(val.toString())){
+			val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+		}
+		return val;
 	}	
 
 	//========================================= Construction

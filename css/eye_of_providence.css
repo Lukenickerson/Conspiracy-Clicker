@@ -145,6 +145,7 @@ section.progress {
 		width: 31%;
 		margin: 0 1%;
 		float: left;
+		padding-bottom: 5em;
 	}
 	.threeCols > section h2 {
 		font-family: 'Permanent Marker', cursive;
@@ -215,6 +216,18 @@ section.progress {
 		border: solid 10px transparent; 
 		border-bottom: solid 10px white;	
 	}
+	.arrow .details {
+		display: none;
+		/* position: absolute; */
+		font-size: 80%;
+		color: white;
+		margin: 0 -5em 0 -5em;
+		text-shadow: 1px 1px 1em black;
+	}
+	.arrow:hover .details {
+		display: block;
+		
+	}
 	
 	/* Positions of arrows */
 	.arrow.leftOut {	
@@ -279,15 +292,15 @@ section.progress {
 
 .industry .clicker {
 	background-image: url('../images/industry_200x200.png');
-	background-color: rgba(50,50,0,0.2);
+	background-color: rgba(200,180,0,0.2);
 }
 .politics .clicker {
 	background-image: url('../images/politics_200x200.png');
-	background-color: rgba(0,50,0,0.2);
+	background-color: rgba(0,150,0,0.2);
 }
 .media .clicker {
 	background-image: url('../images/media_200x200.png');
-	background-color: rgba(0,0,50,0.2);
+	background-color: rgba(0,50,150,0.2);
 }
 
 
@@ -310,11 +323,11 @@ section.progress {
 }
 
 
-.industry  .metrics {	background-color: rgba(50,50,0,0.2); 
+.industry  .metrics {	background-color: rgba(200,180,0,0.2); 
 	padding: 2.5em 0;
 }
-.politics .metrics {	background-color: rgba(0,50,0,0.2); }
-.media .metrics {		background-color: rgba(0,10,50,0.2); }
+.politics .metrics {	background-color: rgba(0,150,0,0.2); }
+.media .metrics {		background-color: rgba(0,50,150,0.2); }
 
 .fixed .metrics {
 	position: fixed;
@@ -324,13 +337,13 @@ section.progress {
 	box-shadow: 0 0 0.2em rgba(0,0,0,0.9);
 }
 .fixed .industry .metrics {	
-	background-color: rgba(165,165,155,1); 
+	background-color: rgba(200,200,170,1); 
 	background-image: url('../images/industry_200x200.png'); 
 }
-.fixed .politics .metrics {	background-color: rgba(155,165,155,1); 
+.fixed .politics .metrics {	background-color: rgba(170,200,170,1); 
 	background-image: url('../images/politics_200x200.png');
 }
-.fixed .media .metrics {	background-color: rgba(155,155,165,1); 
+.fixed .media .metrics {	background-color: rgba(170,180,200,1); 
 	background-image: url('../images/media_200x200.png');
 }
 
@@ -427,10 +440,10 @@ section.progress {
 	.upgradeList > li button.buy:hover .buyText {
 		opacity: 1.0;
 	}
-	.upgradeList > li button.buy:hover {
+	button.buy:hover {
 		background-color: rgba(0,0,0,0.4);
 	}
-	.upgradeList > li button.buy:active {
+	button.buy:active {
 		background-color: rgba(0,0,0,0.6);
 		margin: 0.3em 0 -0.3em 0;
 	}
@@ -455,6 +468,9 @@ section.progress {
 	.upgrade.cannotAfford button.buy {
 		background-color: transparent;
 		box-shadow: none;
+	}
+	.cannAfford button.buy:hover {
+		background-color: transparent;
 	}
 
 
@@ -508,6 +524,9 @@ footer {
 	background-color: rgba(0,0,0,0.5);
 	box-shadow: 0 0 2em rgba(0,0,0,0.5);
 	font-family: 'Sanchez', serif;
+}
+.footerBar {
+	position: relative;
 }
 footer.open {
 
@@ -589,6 +608,13 @@ footer .foot > div {
 	font-size: 90%;
 }
 
+.saveNotice {
+	display: none;
+	position: absolute;
+	top: 0.5em; right: 0.5em;
+	color: white;
+	text-shadow: 0 0 1em rgba(255,255,255,0.5);
+}
 
 
 /* Helpers */
@@ -609,15 +635,7 @@ footer .foot > div {
 
 /* === Media Queries for RESPONSIVE === */
 
-@media only screen and (max-height : 30em) {
-	footer .foot {
-		max-height: 15em;
-		background: #222;
-	}
-	footer {
-		position: static;
-	}
-}
+
 
 @media only screen and (max-width : 1000px) {
 
@@ -681,13 +699,14 @@ footer .foot > div {
 		position: relative;
 		width: auto;
 		height: auto;
-		margin: 0.5em !important;
+		margin: 0.75em !important;
 		padding: 2em 0.5em 0.5em 0.5em;
-		border: solid 1px rgba(255,255,255,0.5);
+		border: solid 1px rgba(255,255,255,0.3);
 		border-radius: 0.5em;
 		background-color: rgba(255,255,255,0.2);
 		line-height: 1.5em;
 		font-size: 80%;
+		box-shadow: 0 0.25em 0 rgba(0,0,0,0.5);
 	}
 	.focus .arrow:after {
 		top: 0.5em;
@@ -697,6 +716,10 @@ footer .foot > div {
 	.focus .arrow.active {
 		background: rgba(255,255,255,0.75);
 	}
+	.arrow .details {
+		display: block;
+	}
+	
 	.about {
 		font-size: 90%;
 	}
@@ -704,12 +727,27 @@ footer .foot > div {
 
 }
 
+
+@media only screen and (max-height : 35em) {
+	footer .foot {
+		max-height: 15em;
+		background: #222;
+	}
+	.fixed .metrics {
+		position: static;
+		width: auto;
+	}
+	footer {
+		position: static;
+	}
+}
+
+
 @media only screen and (max-width : 400px) {
 
 	body {
 		background: #8C8888;
-	}
-
+	}	
 	.threeCols > section {
 		width: auto;
 		float: none;
@@ -718,5 +756,30 @@ footer .foot > div {
 		position: static;
 		width: auto;
 	}
+	
+	.clicker {
+		width: 120px;
+		height: 120px;
+	}
+	.clicker:hover {
+		width: 125px;
+		height: 125px;
+	}
+	.clicker:active {
+		width: 115px;
+		height: 115px;
+	}	
+	.focus .arrow {
+		padding: 0.5em;
+		font-size: 100%;
+	}
+	.focus .arrow:after {
+		display: none;
+	}
+	/*
+	.upgradeList {
+		max-height: 20em; overflow: auto;
+	}
+	*/	
 }
 

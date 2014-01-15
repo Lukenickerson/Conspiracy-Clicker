@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Conspiracy Clicker - Deathray Games - miniLD 48</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|Just+Me+Again+Down+Here|Sanchez' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Oxygen+Mono|Oxygen' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="css/eye_of_providence.css" />	
@@ -96,8 +96,14 @@
 			<div class="focus">
 				<div class="clicker">
 				</div>
-				<div class="arrow leftOut" data-flowfrom="indMoney" data-flowto="medMoney">finance</div>
-				<div class="arrow rightOut" data-flowfrom="indMoney" data-flowto="polMoney">contribution</div>
+				<div class="arrow leftOut" data-flowfrom="indMoney" data-flowto="medMoney">
+					finance
+					<span class="details">media $ &lt;&lt;-- ind. $</span>
+				</div>
+				<div class="arrow rightOut" data-flowfrom="indMoney" data-flowto="polMoney">
+					contribution
+					<span class="details">ind. $ --&gt;&gt; pol. $</span>
+				</div>
 			</div>
 			<div class="metrics">
 				<div class="money mainMetric">
@@ -119,9 +125,18 @@
 			<div class="focus">
 				<div class="clicker">
 				</div>
-				<div class="arrow leftOut" data-flowfrom="votes" data-flowto="indMoney">tax break</div>
-				<div class="arrow rightOut" data-flowfrom="votes" data-flowto="medMoney">tax break</div>
-				<div class="arrow up" data-flowfrom="polMoney" data-flowto="votes">campaign</div>				
+				<div class="arrow leftOut" data-flowfrom="votes" data-flowto="indMoney">
+					tax break
+					<span class="details">ind. $ &lt;&lt;-- votes</span>
+				</div>
+				<div class="arrow rightOut" data-flowfrom="votes" data-flowto="medMoney">
+					tax break
+					<span class="details">votes --&gt;&gt; media $</span>
+				</div>
+				<div class="arrow up" data-flowfrom="polMoney" data-flowto="votes">
+					campaign
+					<span class="details">pol. $ --&gt;&gt; votes</span>
+				</div>
 			</div>
 			<div class="metrics">
 				<div class="votes mainMetric"><span class="val">...</span> 
@@ -155,9 +170,18 @@
 			<div class="focus">
 				<div class="clicker">
 				</div>
-				<div class="arrow leftOut" data-flowfrom="minds" data-flowto="votes">propaganda</div>
-				<div class="arrow rightOut" data-flowfrom="minds" data-flowto="indMoney">ads</div>
-				<div class="arrow up" data-flowfrom="medMoney" data-flowto="minds">mass broadcast</div>
+				<div class="arrow leftOut" data-flowfrom="minds" data-flowto="votes">
+					propaganda
+					<span class="details">votes &lt;&lt;-- minds</span>
+				</div>
+				<div class="arrow rightOut" data-flowfrom="minds" data-flowto="indMoney">
+					ads
+					<span class="details">minds --&gt;&gt; ind. $</span>
+				</div>
+				<div class="arrow up" data-flowfrom="medMoney" data-flowto="minds">
+					mass broadcast
+					<span class="details">media $ --&gt;&gt; minds</span>
+				</div>
 			</div>
 			<div class="metrics">
 				<div class="minds mainMetric"><span class="val">...</span> 
@@ -191,10 +215,14 @@
 	<footer>
 		<!--- *** Options for customizations --->
 		<!--- *** More info --->
-		<button type="button" class="openFoot"><span>open</span></button>
+		<div class="footerBar">
+			<button type="button" class="openFoot"><span>open</span></button>
+			<div class="saveNotice">Saved</div>
+		</div>
 		<div class="foot">
 			<div class="options">
 				<!--- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> --->
+				<button type="button" class="toggleAutoSave">Toggle AutoSave</button>
 				<button type="button" class="save">Save Game Now</button>
 				<button type="button" class="load">Load Saved Game</button>
 				<button type="button" class="delete">Delete Saved Game</button>
@@ -205,8 +233,8 @@
 			<div class="about">
 				<h2>About</h2>
 				<p>
-					Conspiracy Clicker was made by Luke Nickerson over 
-					48 hours for mini-LD #48 in Jan 2014. 
+					Conspiracy Clicker was originally made by Luke Nickerson over 
+					48 hours for mini-LD #48 in Jan 2014. (<a href="../miniLD48/">Original Version</a>)
 					Additional creative input by Jeffery M. Beach.
 				</p>
 				<p>

@@ -41,7 +41,7 @@
 				"name" 				: "Media Shell Corporation"
 				,"costMultiplier" 	: 1.5
 				,"baseCost" 		: {	"indMoney" : 3600 }
-				,"perSecond" 		: {	"medMoney" : 30 }
+				,"perSecond" 		: {	"medMoney" : 20, "indMoney" : 10 }
 				,"requirements" 	: { }
 				,"details"			: ""			
 			}			
@@ -97,7 +97,7 @@
 				"name" 				: "Dark Skies Lobbying Group"
 				,"costMultiplier" 	: 1.5
 				,"baseCost" 		: {	"indMoney" : 600000 }
-				,"perSecond" 		: {	"indMoney" : 1000, "polMoney" : 1000, "votes" : 2000 }
+				,"perSecond" 		: {	"indMoney" : 2000, "polMoney" : 1000, "votes" : 1000 }
 				,"requirements" 	: { }
 				,"details"			: ""			
 			}
