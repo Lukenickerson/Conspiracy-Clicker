@@ -1,0 +1,440 @@
+{
+	"groups" : [
+	
+	
+	],
+	"upgrades" : {
+		"industry" : [
+			{
+				"name" 				: "Lemonade Sweatshop"
+				,"costMultiplier" 	: 1.3
+				,"baseCost" 		: {	"indMoney" : 20 }
+				,"perSecond" 		: {	"indMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: "Children are easily tricked into working for free. Put them to work selling lemon-flavored sugar water."
+			}
+			,{
+				"name" 				: "Towing Garages"
+				,"costMultiplier" 	: 1.4
+				,"baseCost" 		: {	"indMoney" : 120 }
+				,"perSecond" 		: {	"indMoney" : 2 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Quik-e-Gunz 'n' Beer"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 720 }
+				,"perSecond" 		: {	"indMoney" : 6 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Shark Law Firm"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 2400 }
+				,"perSecond" 		: {	"indMoney" : 20 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Media Shell Corporation"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 3600 }
+				,"perSecond" 		: {	"medMoney" : 30 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Ducttape Healthcare"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 13000 }
+				,"perSecond" 		: {	"indMoney" : 100 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Build-a-Burger Group"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 48000 }
+				,"perSecond" 		: {	"indMoney" : 400 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "GMO Super-Sloth Super-Food"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 120000 }
+				,"perSecond" 		: {	"indMoney" : 600, "minds" : 100, "votes" : 100 }
+				,"requirements" 	: { }
+				,"details"			: "Food so large you'll be forever full and bloated."
+			}
+			,{
+				"name" 				: "HapChem Pharmaceuticals"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 180000 }
+				,"perSecond" 		: {	"indMoney" : 600, "minds" : 500, "votes" : 100 }
+				,"requirements" 	: { }
+				,"details"			: "Happy life is happy. Happy time. Take your pill. Happy."
+			}
+			,{
+				"name" 				: "Megaton Mining"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 250000 }
+				,"perSecond" 		: {	"indMoney" : 1600 }
+				,"requirements" 	: { }
+				,"details"			: "Prepare the bombs, it is time to delve too greedily and too deep!"
+			}			
+			,{
+				"name" 				: "Elder Bank"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 500000 }
+				,"perSecond" 		: {	"indMoney" : 2500, "medMoney" : 500 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Dark Skies Lobbying Group"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 600000 }
+				,"perSecond" 		: {	"indMoney" : 1000, "polMoney" : 1000, "votes" : 2000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Super PAC"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 700000 }
+				,"perSecond" 		: {	"polMoney" : 3500, "medMoney" : 500, "votes" : 500 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Covert Trading Council"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 900000 }
+				,"perSecond" 		: {	"indMoney" : 1000, "medMoney" : 2500, "polMoney" : 2500 }
+				,"requirements" 	: { }
+				,"details"			: "This government-sanctioned council meets in secret to shift funds to wherever they are needed."
+			}			
+			,{
+				"name" 				: "Pantheon Drone Defense Corp."
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 10000000 }
+				,"perSecond" 		: {	"indMoney" : 50000, "votes" : 2000, "polMoney" : 2000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "International Reserve"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 40000000 }
+				,"perSecond" 		: {	"indMoney" : 140000, "medMoney" : 20000, "polMoney" : 20000, "votes" : 20000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Sludge Family Oil"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 50000000 }
+				,"perSecond" 		: {	"indMoney" : 200000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "10^100 OmniNet"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"indMoney" : 100000000 }
+				,"perSecond" 		: {	"indMoney" : 400000, "minds" : 50000, "medMoney" : 50000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			
+		]
+		,"politics" : [		
+			{
+				"name" 				: "Seductive Interns"
+				,"costMultiplier" 	: 1.3
+				,"baseCost" 		: {	"polMoney" : 24 }
+				,"perSecond" 		: {	"polMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: "Seductive interns are excellent are raising funds and raising spirits. Expenses include cigars and dry-cleaning."
+			}
+			,{
+				"name" 				: "Robo-Dialer"
+				,"costMultiplier" 	: 1.4
+				,"baseCost" 		: {	"polMoney" : 30 }
+				,"perSecond" 		: {	"votes" : 1 }
+				,"requirements" 	: { }
+				,"details"			: "Robodialer gets votes."
+			}
+			,{
+				"name" 				: "Alpha Sigma Sigma"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 200 }
+				,"perSecond" 		: {	"votes" : 1, "polMoney" : 2 }
+				,"requirements" 	: { }
+				,"details"			: "Fraternity brothers help raise money and get the vote out."
+			}
+			,{
+				"name" 				: "Local Corrupt Politicians"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 700 }
+				,"perSecond" 		: {	"votes" : 3, "polMoney" : 1, "indMoney" : 1, "medMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: "They won't get anything notable accomplished, but they'll make people think democracy works."
+			}
+			,{
+				"name" 				: "Megalomaniac Mayors"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 1200 }
+				,"perSecond" 		: {	"votes" : 10 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Secret Mistresses"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 1500 }
+				,"perSecond" 		: {	"votes" : 6, "minds" : 5, "medMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: "These loose women help to bring scandal to opponents and dominate news stories."
+			}
+			,{
+				"name" 				: "Irresponsible Deregulation"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 3600 }
+				,"perSecond" 		: {	"indMoney" : 20, "medMoney" : 10 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}			
+			,{
+				"name" 				: "League of Governors"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 7200 }
+				,"perSecond" 		: {	"votes" : 60 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Dangerous Deregulation"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 12000 }
+				,"perSecond" 		: {	"indMoney" : 50, "medMoney" : 50 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Bohemian Field"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 20400 }
+				,"perSecond" 		: {	"votes" : 120, "polMoney" : 50 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Crooked Congressmen"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 140000 }
+				,"perSecond" 		: {	"votes" : 700, "polMoney" : 200, "indMoney" : 50, "medMoney" : 50 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Sinister Senators"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 200000 }
+				,"perSecond" 		: {	"votes" : 1600 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Freebuilders Guild"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 500000 }
+				,"perSecond" 		: {	"votes" : 1500, "minds" : 250, "polMoney" : 250 }
+				,"requirements" 	: { }
+				,"details"			: "The Freebuilders are a secret society based on Minecraft masonry. Block by block they have dominated international politics."
+			}
+			,{
+				"name" 				: "Presidential Candidates"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 2000000 }
+				,"perSecond" 		: {	"votes" : 10000, "minds" : 1000 }
+				,"requirements" 	: { }
+				,"details"			: "One of these fine men will become president, and it won't matter who as long as we control them all."
+			}			
+			,{
+				"name" 				: "National Republicrat Party"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 10000000 }
+				,"perSecond" 		: {	"votes" : 30000, "polMoney" : 20000, "indMoney" : 5000 }
+				,"requirements" 	: { }
+				,"details"			: "We are against those things that everyone hates! Paid for by the campaign to elect Jack Johnson."
+			}
+			,{
+				"name" 				: "National Demopublican Party"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"polMoney" : 10000000 }
+				,"perSecond" 		: {	"votes" : 20000, "polMoney" : 30000, "medMoney" : 5000 }
+				,"requirements" 	: { }
+				,"details"			: "We agree with everything our opponents stand for! Paid for by the campaign to elect John Jackson."
+			}
+			,{
+				"name" 				: "The President"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 66000000 }
+				,"perSecond" 		: {	"votes" : 200000, "polMoney" : 100000, "medMoney" : 30000, "indMoney" : 30000 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}			
+		]
+		,"media" : [
+			{
+				"name" 				: "Rogue Blogger Network"
+				,"costMultiplier" 	: 1.3
+				,"baseCost" 		: {	"medMoney" : 12 }
+				,"perSecond" 		: {	"minds" : 0.5, "medMoney" : 0.1 }
+				,"requirements" 	: { }
+				,"details"			: "Beyond Top Secret .net"			
+			}		
+			,{
+				"name" 				: "Subversive Spam"
+				,"costMultiplier" 	: 1.4
+				,"baseCost" 		: {	"medMoney" : 180 }
+				,"perSecond" 		: {	"minds" : 0.5, "medMoney" : 2 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "'Shore to Shore' Radio"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 500 }
+				,"perSecond" 		: {	"minds" : 4, "medMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Newsstands"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 940 }
+				,"perSecond" 		: {	"medMoney" : 4, "minds" : 4 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Subliminal Advertising"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"minds" : 1000 }
+				,"perSecond" 		: {	"indMoney" : 6, "medMoney" : 2 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Reality Shows"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"minds" : 2000 }
+				,"perSecond" 		: {	"minds" : 15, "medMoney" : 1 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "World of Spycraft"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 6000 }
+				,"perSecond" 		: {	"medMoney" : 20, "minds" : 30 }
+				,"requirements" 	: { }
+				,"details"			: "This MMO game allows citizen to mindless grind in a virtual world while spy agencies observe every detail."			
+			}
+			,{
+				"name" 				: "Ultra GameBox MK"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 10200 }
+				,"perSecond" 		: {	"medMoney" : 35, "minds" : 50 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Xenophobic TV Hosts"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 15000 }
+				,"perSecond" 		: {	"medMoney" : 25, "minds" : 100 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Blowhard Radio Show"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 24000 }
+				,"perSecond" 		: {	"medMoney" : 50, "minds" : 150 }
+				,"requirements" 	: { }
+				,"details"			: ""
+			}
+			,{
+				"name" 				: "Rockefelberg News"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 50000 }
+				,"perSecond" 		: {	"indMoney" : 100, "medMoney" : 100, "minds" : 100 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Election Attack Ads"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"minds" : 50000 }
+				,"perSecond" 		: {	"votes" : 250, "minds" : 50 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Hollywood Films"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 120000 }
+				,"perSecond" 		: {	"minds" : 300, "medMoney" : 500 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "BrainBook"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 1000000 }
+				,"perSecond" 		: {	"minds" : 4500, "indMoney" : 500, "medMoney" : 500 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Foxy 21 News"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 2500000 }
+				,"perSecond" 		: {	"votes" : 5000, "minds" : 5000, "medMoney" : 4000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Happy Rat Conglomerate"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 5000000 }
+				,"perSecond" 		: {	"minds" : 15000, "medMoney" : 10000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}
+			,{
+				"name" 				: "Time-Weiner Media Group"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"medMoney" : 5000000 }
+				,"perSecond" 		: {	"minds" : 10000, "medMoney" : 15000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+			,{
+				"name" 				: "Internet Censorship"
+				,"costMultiplier" 	: 1.5
+				,"baseCost" 		: {	"votes" : 10000000 }
+				,"perSecond" 		: {	"minds" : 40000, "votes" : 15000 }
+				,"requirements" 	: { }
+				,"details"			: ""			
+			}			
+		]
+	}
+	
+}

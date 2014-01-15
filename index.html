@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Conspiracy Clicker - Deathray Games - miniLD 48</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|Just+Me+Again+Down+Here|Sanchez' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Oxygen+Mono|Oxygen' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/eye_of_providence.css" />	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+</head>
+<body>
+
+	<header>
+		<h1><span class="conspiracyWord">Conspiracy</span> <span class="clickerWord">Clicker</span></h1>
+		<!--- *** Octopus background --->
+		<!--- *** Cards --->
+	</header>
+	
+	<section class="intro">
+		<div class="nwo">
+			It is time that our organization fulfills the ancient prophecies 
+			and creates a New World Order!
+		</div>
+		<p>
+			In order for our organization to dominate the world, we will need a vast conspiracy
+			to draw together various sources of power.
+			<br>
+			Much of our power will come about by convincing the people 
+			of the planet that our ways are best. 
+			To do this we will need to utilize
+			the <strong>Media</strong> to educate the willing and brainwash the rest of the
+			stupified population. 
+		</p>
+		<p>
+			We will also need to need to co-opt the democractic process and ensure that
+			we have full control over all <strong>Politics</strong>. Once our politicians
+			are enstated, they will control the agenda and the voters will flock to them.
+			<br>
+			In order to accomplish this we will need a lot of money, so it's vital that
+			we control the <strong>Industry</strong> of the world. Will the profits of all
+			the businesses combined together, everything we will need will be for sale.
+			Fortunately the political realm and the media are already easily subjugated 
+			by money; if we are patient with our conspiratorial schemes, we should not fail.
+		</p>
+		<button type="button" class="openWalkthru">Continue...</button>
+	</section>
+	
+	<section class="walkthru">
+		<p>
+			This game is made up of three different sectors - Industry, Politics, Media - 
+			and three different currencies: money, votes, and controlled minds.
+			Each sector has it's own funds and it's own specialty. 
+			Industry's primarily job is generating money; Politics can generate votes or money;
+			Media can generate controlled minds or money.
+		</p>
+		<p>
+			To play this game, you will utilize three main features:
+		</p>
+		<ol>
+			<li><strong>Click Sector Icon</strong> - Every click will generate money. The 
+				more upgrades you have, the more money you'll generate with each click.
+			</li>
+			<li><strong>Purchase Upgrades</strong> - These are listed below each sector icon; 
+				click the button to purchase one upgrade (if you have the funds), or click the
+				upgrade to see more details. Some upgrades in a sector will aid another sector.
+			</li>
+			<li><strong>Transfers</strong> - Currencies can be transferred between sectors
+				by activating one of the arrows/buttons connecting the three sector icons.
+				Only one transfer can be active at a time. Financing and contributions move money, 
+				tax breaks turn votes into money, propaganda turns mind controll into votes,
+				and ads turn mind control into money for industry. Campaigns use money to create
+				votes, while a mass broadcast will convert money into mind control.
+				
+			</li>
+		</ol>
+		<p>
+			In order to win, you need to have millions of voters and minds 
+			secure under your control. your progress can be measured with the progress bar at
+			the top (it takes a while for you to even register on it!).
+		</p>
+		<button type="button" class="openGame">Begin your Conspiracy...</button>
+	</section>
+	
+	<section class="progress">
+		<h2>Progress</h2>
+		<div class="progressBar">
+		</div>
+		<div class="progressVal">
+		</div>
+	</section>
+	
+	<div class="threeCols">
+		<section class="clearfix industry">
+			<h2>Industry</h2>
+			<div class="focus">
+				<div class="clicker">
+				</div>
+				<div class="arrow leftOut" data-flowfrom="indMoney" data-flowto="medMoney">finance</div>
+				<div class="arrow rightOut" data-flowfrom="indMoney" data-flowto="polMoney">contribution</div>
+			</div>
+			<div class="metrics">
+				<div class="money mainMetric">
+					<span class="val">...</span>
+				</div>
+				<div class="profitPerSecond">Profit: <span class="val">...</span> 
+					<span class="units">$/sec</span>
+				</div>
+				<div class="profitPerClick perClick"><span class="val">...</span>
+					<span class="units">$/click</span>
+				</div>
+			</div>			
+			<ul class="upgradeList">
+				<li></li>
+			</ul>
+		</section>
+		<section class="clearfix politics">
+			<h2>Politics</h2>
+			<div class="focus">
+				<div class="clicker">
+				</div>
+				<div class="arrow leftOut" data-flowfrom="votes" data-flowto="indMoney">tax break</div>
+				<div class="arrow rightOut" data-flowfrom="votes" data-flowto="medMoney">tax break</div>
+				<div class="arrow up" data-flowfrom="polMoney" data-flowto="votes">campaign</div>				
+			</div>
+			<div class="metrics">
+				<div class="votes mainMetric"><span class="val">...</span> 
+					<span class="units">Votes</span>
+				</div>
+				<div class="votesPerSecond">
+					Influence: <span class="val">...</span>
+					<span class="units">votes/sec</span>
+				</div>
+				<div class="votesPerClick perClick"><span class="val">...</span>
+					<span class="units">votes/click</span>
+				</div>
+				<div class="money mainMetric">
+					<span class="val">...</span>
+				</div>
+				<div class="profitPerSecond">
+					Donations: <span class="val">...</span>
+					<span class="units">$/sec</span>
+				</div>
+				<div class="profitPerClick perClick">
+					<span class="val">...</span>
+					<span class="units">$/click</span>
+				</div>
+			</div>
+			<ul class="upgradeList">
+				<li></li>				
+			</ul>	
+		</section>
+		<section class="clearfix media">
+			<h2>Media</h2>
+			<div class="focus">
+				<div class="clicker">
+				</div>
+				<div class="arrow leftOut" data-flowfrom="minds" data-flowto="votes">propaganda</div>
+				<div class="arrow rightOut" data-flowfrom="minds" data-flowto="indMoney">ads</div>
+				<div class="arrow up" data-flowfrom="medMoney" data-flowto="minds">mass broadcast</div>
+			</div>
+			<div class="metrics">
+				<div class="minds mainMetric"><span class="val">...</span> 
+					<span class="units">Minds Controlled</span>
+				</div>
+				<div class="mindsPerSecond">
+					Reach: <span class="val">...</span> 
+					<span class="units">minds/sec</span>
+				</div>
+				<div class="mindsPerClick perClick">
+					<span class="val">...</span> 
+					<span class="units">minds/click</span>
+				</div>
+				<div class="money mainMetric"><span class="val">...</span></div>
+				<div class="profitPerSecond">Profit: 
+					<span class="val">...</span>
+					<span class="units">$/sec</span>
+				</div>
+				<div class="profitPerClick perClick">
+					<span class="val">...</span>
+					<span class="units">$/click</span>
+				</div>	
+			</div>
+			<ul class="upgradeList">
+				<li></li>
+			</ul>		
+		</section>
+	</div>
+	
+	
+	<footer>
+		<!--- *** Options for customizations --->
+		<!--- *** More info --->
+		<button type="button" class="openFoot"><span>open</span></button>
+		<div class="foot">
+			<div class="options">
+				<!--- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> --->
+				<button type="button" class="save">Save Game Now</button>
+				<button type="button" class="load">Load Saved Game</button>
+				<button type="button" class="delete">Delete Saved Game</button>
+				<button type="button" class="toggleSound">Toggle Sound</button>
+				<button type="button" class="stopLoop">Stop</button>
+				<button type="button" class="startLoop">Start</button>
+			</div>
+			<div class="about">
+				<h2>About</h2>
+				<p>
+					Conspiracy Clicker was made by Luke Nickerson over 
+					48 hours for mini-LD #48 in Jan 2014. 
+					Additional creative input by Jeffery M. Beach.
+				</p>
+				<p>
+					Inspired by <a href="http://orteil.dashnet.org/cookieclicker/" target="_blank">Cookie Clicker</a>
+					and <a href="http://www.sjgames.com/illuminati/" target="_blank">the Illuminati card game</a>.
+				</p>
+				<p>
+					All code and graphics is original and &copy; 
+					(aside from jQuery and Google Fonts).
+					Futher information available at 
+					<a href="http://deathraygames.com/" target="_blank">Deathray Games</a>,
+					<a href="http://deathraygames.tumblr.com/" target="_blank">Tumblr</a>, or
+					<a href="http://www.ludumdare.com/compo/?author_name=deathray" target="_blank">Ludum Dare</a>.
+				</p>
+				<p>
+					
+				</p>
+			</div>
+		</div>
+	</footer>
+	
+	<script src="js/all_seeing.js"></script>
+	<script>
+		$(document).ready(function(){
+			window.drg = new CCGameClass();
+			drg.setup();
+		});
+	</script>
+	
+</body>
+</html>
