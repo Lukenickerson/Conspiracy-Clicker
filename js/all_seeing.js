@@ -96,7 +96,7 @@ var CCGameClass = function ()
 	
 	this.loop = function() {
 		var o = this;
-		console.log("loop");
+		//console.log("loop");
 	
 		o.total.indMoney += (o.perSecond.indMoney * o.secondsPerLoop);
 		o.total.polMoney += ((o.perSecond.polMoney) * o.secondsPerLoop);
@@ -688,7 +688,7 @@ var CCGameClass = function ()
 		var $3cols = $('.threeCols');
 		$win.scroll(function() {
 			var height = $win.scrollTop();
-			console.log(height);
+			//console.log(height);
 			if (height > 550) {
 				$3cols.addClass("fixed");
 			} else {
@@ -755,6 +755,7 @@ var CCGameClass = function ()
 		var o = this;
 		var isLoaded = false;
 		// Load game data (two objects)
+		console.log(localStorage.getItem("owned"), localStorage.getItem("total"));
 		var loadedOwned = localStorage.getItem("owned");
 		if (loadedOwned !== null) {
 			o.owned = JSON.parse(loadedOwned);
