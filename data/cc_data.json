@@ -166,7 +166,7 @@
 				,"baseCost" 		: {	"polMoney" : 30 }
 				,"perSecond" 		: {	"votes" : 1 }
 				,"requirements" 	: { }
-				,"details"			: "Robodialer gets votes."
+				,"details"			: "Robo-Dialer can't be reasoned with; it doesn't feel pity, or remorse, or fear; and it absolutely will not stop."
 			}
 			,{
 				"name" 				: "Alpha Sigma Sigma"

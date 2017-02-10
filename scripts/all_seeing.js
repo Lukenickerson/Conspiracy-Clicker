@@ -12,7 +12,7 @@ RocketBoots.loadComponents([
 			{"incrementer": "Incrementer"}
 		]
 	});
-
+	g.version = "beta-1.1.0";
 
 	/* === Conspiracy Clicker Game === */
 
@@ -242,6 +242,9 @@ RocketBoots.loadComponents([
 		this.writeUpgradesForSector = function (sector) {
 			var h = "";
 			var sectorUpgrades = this.owned.upgrades[sector];
+			var lastOwnedUpgradeIndex = -1;
+			var SHOW_LAST_UPGRADES = 3;
+			var unknownCount = 0;
 			for (var ugi in sectorUpgrades) {
 				var upgradeCount = sectorUpgrades[ugi];
 				var upgrade = this.data.upgrades[sector][ugi];
@@ -255,10 +258,15 @@ RocketBoots.loadComponents([
 				}
 				if (upgradeCount > 0) {
 					h += ' owned ';
+					lastOwnedUpgradeIndex = ugi;
 				} else {
 					h += ' notOwned ';
-				}			
-				h += '" '
+				}
+				if ((ugi - lastOwnedUpgradeIndex) > SHOW_LAST_UPGRADES) {
+					h += ' unknown ';
+					unknownCount++;
+				}
+				h += '" ' // end class
 					+ ' data-ugi="' + ugi + '" '
 					+ ' data-sector="' + sector + '" '
 					+ '>'
@@ -301,6 +309,9 @@ RocketBoots.loadComponents([
 				h += '</div>' // endof back
 					+ '</li>'
 				;
+			}
+			if (unknownCount > 0) {
+				h += '<div class="upgrades-tease">+ ' + unknownCount + ' more upgrades</div>';
 			}
 			if (typeof this.$upgradeLists[sector] !== 'undefined') {
 				this.$upgradeLists[sector].html(h);
@@ -533,6 +544,8 @@ RocketBoots.loadComponents([
 		
 		
 			//=========== Setup UI
+
+			$('.version').html(g.version);
 			
 			var $indClicker = $('section.industry .clicker');
 			var $polClicker = $('section.politics .clicker');
