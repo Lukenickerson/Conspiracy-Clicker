@@ -102,17 +102,9 @@ RocketBoots.loadComponents([
 			var o = this;
 			//console.log("loop");
 		
-			o.total.indMoney += (o.perSecond.indMoney * o.secondsPerLoop);
-			o.total.polMoney += ((o.perSecond.polMoney) * o.secondsPerLoop);
-			o.total.votes += ((o.perSecond.votes) * o.secondsPerLoop);
-			o.total.medMoney += ((o.perSecond.medMoney) * o.secondsPerLoop);
-			o.total.minds += ((o.perSecond.minds) * o.secondsPerLoop);
-			
-			if (o.total.indMoney < 0) o.total.indMoney = 0;
-			if (o.total.polMoney < 0) o.total.polMoney = 0;
-			if (o.total.medMoney < 0) o.total.medMoney = 0;
-			if (o.total.votes < 0) o.total.votes = 0;
-			if (o.total.minds < 0) o.total.minds = 0;
+			o.loopOverCurrencies(function(curr){
+				o.incrementCurrency(curr, o.secondsPerLoop);
+			});
 		
 			o.displayNumber(o.total.indMoney, o.$indMoneyVal);
 			o.displayNumber(o.total.polMoney, o.$polMoneyVal);
@@ -134,6 +126,7 @@ RocketBoots.loadComponents([
 				o.displayProgress();
 				o.updateUpgradeAfford();
 			} else if (((o.loopIteration + 2) % o.loopModulus) == 0) {
+				/*
 				if (o.flow.from != "" && o.flow.to != "") {
 					var flowSpeed = o.flow.baseSpeed + (o.flow.percentSpeed * o.total[o.flow.from]);
 					if (o.total[o.flow.from] >= flowSpeed) {
@@ -141,6 +134,7 @@ RocketBoots.loadComponents([
 						o.total[o.flow.to] += (flowSpeed * o.flow.efficiency);
 					}
 				}
+				*/
 				// Check for auto-save
 				if (o.isAutoSaveOn) {
 					var now = new Date();
@@ -149,15 +143,16 @@ RocketBoots.loadComponents([
 					}
 				}
 			}
-			
 		
 			if (o.isLooping) {
 				o.loopIteration++;
 				if (o.loopIteration < 15000000) {
 					o.loopTimer = window.setTimeout(function(){
 						o.loop();
-					}, o.loopDelay); 
-					
+					}, o.loopDelay);
+				} else { // restart so iteration doesn't get too high
+					o.stopLoop();
+					o.startLoop();
 				}
 			}
 		}
@@ -391,38 +386,77 @@ RocketBoots.loadComponents([
 			return true;
 		}
 		
-		
+		this.isFlowing = function () {
+			return (this.flow.from.length > 0 && this.flow.to.length > 0);
+		}
+
+		this.incrementCurrency = function (currencyKey, multiplier) {
+			this.total[currencyKey] += (this.perSecond[currencyKey] * multiplier);
+			if (this.total[currencyKey] < 0) {
+				this.total[currencyKey] = 0;
+			}
+		}
+
+		this.calculateFlowValues = function () {
+			var flowSpeed;
+			if (this.isFlowing()) {
+				flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * this.total[this.flow.from]);
+				// Make sure the amount flowing from can support it
+				if (this.total[this.flow.from] >= flowSpeed) {
+					this.perSecond[this.flow.from] -= flowSpeed;
+					this.perSecond[this.flow.to] += (flowSpeed * this.flow.efficiency);
+				}
+			}
+		}
+
 		this.calculateCoreValues = function () {
+			var o = this;
 			this.setDefaults();
 			
-			for (var sector in this.owned.upgrades) {
-				var sectorUpgrades = this.owned.upgrades[sector];
+			// Loop through all upgrades
+			this.loopOverSectors(function(sector){
+				var sectorUpgrades = o.owned.upgrades[sector];
 				for (var ug in sectorUpgrades) {
 					var upgradeQuantity = sectorUpgrades[ug];
 					if (upgradeQuantity > 0) {
-						var upgrade = this.data.upgrades[sector][ug];
+						var upgrade = o.data.upgrades[sector][ug];
 						if (typeof upgrade.perSecond === 'object') {
 							// Loop through all types and see if the upgrade has values
-							for (var vti in this.valueTypes) {
-								var valueType = this.valueTypes[vti];
+							for (var vti in o.valueTypes) {
+								var valueType = o.valueTypes[vti];
 								if (typeof upgrade.perSecond[valueType] === 'number') {
-									this.perSecond[valueType] += (upgradeQuantity * upgrade.perSecond[valueType]);
+									o.perSecond[valueType] += (upgradeQuantity * upgrade.perSecond[valueType]);
 								}						
 							}
 						}
 						if (typeof upgrade.perClick === 'object') {
 							// Loop through all types and see if the upgrade has values
-							for (var vti in this.valueTypes) {
-								var valueType = this.valueTypes[vti];
+							for (var vti in o.valueTypes) {
+								var valueType = o.valueTypes[vti];
 								if (typeof upgrade.perClick[valueType] === 'number') {
-									this.perSecond[valueType] += (upgradeQuantity * upgrade.perClick[valueType]);
+									o.perSecond[valueType] += (upgradeQuantity * upgrade.perClick[valueType]);
 								}							
 							}					
 						}
 					}
 				}
+			});
+
+			this.calculateFlowValues();
+		}
+
+		this.loopOverSectors = function (callback) {
+			for (var sector in this.owned.upgrades) {
+				callback(sector);
 			}
-		
+		}
+
+		this.loopOverCurrencies = function (callback) {
+			var currencies = ["indMoney", "polMoney", "votes", "medMoney", "minds"];
+			var numOfCurrencies = currencies.length;
+			for (var i = 0; i < numOfCurrencies; i++) {
+				callback(currencies[i]);
+			}		
 		}
 		
 		this.buyUpgrade = function(sector, upgradeIndex, doWriteUpgrades) {
