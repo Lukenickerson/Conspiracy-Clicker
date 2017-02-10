@@ -2,19 +2,17 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Conspiracy Clicker - Deathray Games - miniLD 48</title>
+	<title>Conspiracy Clicker by Deathray Games</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|Just+Me+Again+Down+Here|Sanchez' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Oxygen+Mono|Oxygen' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="css/eye_of_providence.css" />	
+	<link rel="stylesheet" href="styles/eye_of_providence.css" />	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 </head>
 <body>
 
 	<header>
 		<h1><span class="conspiracyWord">Conspiracy</span> <span class="clickerWord">Clicker</span></h1>
-		<!--- *** Octopus background --->
-		<!--- *** Cards --->
 	</header>
 	
 	<section class="intro">
@@ -213,15 +211,15 @@
 	
 	
 	<footer>
-		<!--- *** Options for customizations --->
-		<!--- *** More info --->
+		<!-- *** Options for customizations -->
+		<!-- *** More info -->
 		<div class="footerBar">
 			<button type="button" class="openFoot"><span>open</span></button>
 			<div class="saveNotice">Saved</div>
 		</div>
 		<div class="foot">
 			<div class="options">
-				<!--- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> --->
+				<!-- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> -->
 				<button type="button" class="toggleAutoSave">Toggle AutoSave</button>
 				<button type="button" class="save">Save Game Now</button>
 				<button type="button" class="load">Load Saved Game</button>
@@ -233,8 +231,11 @@
 			<div class="about">
 				<h2>About</h2>
 				<p>
-					Conspiracy Clicker was originally made by Luke Nickerson over 
-					48 hours for mini-LD #48 in Jan 2014. (<a href="../miniLD48/">Original Version</a>)
+					Version beta-1.1.0
+				</p>
+				<p>
+					Conspiracy Clicker was originally designed and created by Luke Nickerson in 
+					48 hours for mini-LD #48 in Jan 2014. (<a href="../miniLD48/">Original Version</a>).
 					Additional creative input by Jeffery M. Beach.
 				</p>
 				<p>
@@ -249,30 +250,16 @@
 					<a href="http://deathraygames.tumblr.com/" target="_blank">Tumblr</a>, or
 					<a href="http://www.ludumdare.com/compo/?author_name=deathray" target="_blank">Ludum Dare</a>.
 				</p>
-				<p>
-					
-				</p>
 			</div>
 		</div>
 	</footer>
 	
-	<script src="js/all_seeing.js"></script>
-	<script>
-		$(document).ready(function(){
-			window.drg = new CCGameClass();
-			drg.setup();
-		});
-	</script>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-7118348-1', 'deathraygames.com');
-  ga('send', 'pageview');
-</script>
-
+	<div class="scripts">
+		<script src="scripts/libs/jquery-3.1.1.min.js"></script>
+		<script src="scripts/rocketboots/core.js"></script>
+		<script src="scripts/all_seeing.js"></script>
+		<script src="http://deathraygames.com/js/ga.js"></script>
+	</div>
 	
 </body>
 </html>
