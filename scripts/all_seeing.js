@@ -36,19 +36,47 @@ RocketBoots.loadComponents([
 		"intro": {
 
 		},
-		"start": {
-
+		"walkthru": {
+			start: function(){
+				$('.intro .goto').fadeOut(200);
+				$('section.intro').fadeOut(1000, function(){
+					$('section.walkthru').fadeIn(1000, function(){
+						$('.threeCols').fadeIn(1000);
+					});
+				});
+			},
+			end: function(){
+				$('.walkthru .goto').fadeOut(200);
+				$('section.walkthru').fadeOut(1000,function(){
+					g.cc.saveGame();
+					g.cc.loadGame(true);
+				});				
+			}
 		},
 		"game": {
 			viewName: "game",
 			start: function(){
-				g.loop.start();
+				g.cc.calculateCoreValues();
+				g.cc.writeUpgrades();
+				//o.addFlipCardEvents();
+				$('.metrics').slideDown(1000);
+				$('.progress').show(2000);
+				$('.threeCols').fadeIn(2000, function(){
+					g.loop.start();
+				});
+				
 			},
 			end: function(){
 				g.loop.stop();
 			}
 		},
 		"pause": {
+
+		},
+		"menu": {
+
+		},
+		"win": {
 
 		}
 	});
@@ -179,7 +207,7 @@ RocketBoots.loadComponents([
 			this.$progressBar.html('<div style="width: ' + progressPercent + '%"></div>');
 			
 			if (progressPercent == 100 && !this.winShown) {
-				alert("Congratulations, our conspiracy has dominated the world!");
+				g.state.transition("win");
 				this.winShown = true;
 			}
 		}
@@ -630,27 +658,9 @@ RocketBoots.loadComponents([
 			o.$progressVal = $('section.progress .progressVal');
 			o.$progressBar = $('section.progress .progressBar');
 			
-			o.$saveNotice = $('.saveNotice');
-			
 			$indClicker.click(function(e){	o.industryClick(e); });
 			$polClicker.click(function(e){	o.politicsClick(e); });
 			$medClicker.click(function(e){	o.mediaClick(e); });
-			
-			$('.openFoot').click(function(e){
-				var $this = $(this);
-				if ($this.hasClass("closeFoot")) {
-					
-					$this.removeClass("closeFoot");
-					//$('footer .foot').slideUp(400);
-					$('footer').removeClass("open");
-					$this.find('span').html("open");
-				} else {
-					$this.addClass("closeFoot");
-					//$('footer .foot').slideDown(400);
-					$('footer').addClass("open");
-					$this.find('span').html("close");
-				}
-			});
 			
 			$('.save').click(function(e){
 				o.playSound("save1");
@@ -678,19 +688,10 @@ RocketBoots.loadComponents([
 			
 			/* Intro */
 			$('.openWalkthru').click(function(e){
-				$(this).fadeOut(200);
-				$('section.intro').fadeOut(1000, function(){
-					$('section.walkthru').fadeIn(1000, function(){
-						$('.threeCols').fadeIn(1000);
-					});
-				});
+				g.state.transition("walkthru");
 			});
 			$('.openGame').click(function(e){
-				$(this).fadeOut(200);
-				$('section.walkthru').fadeOut(1000,function(){
-					o.saveGame();
-					o.loadGame(true);
-				});
+				g.state.transition("game");
 			});
 			
 			
@@ -748,7 +749,7 @@ RocketBoots.loadComponents([
 			$win.scroll(function() {
 				var height = $win.scrollTop();
 				//console.log(height);
-				if (height > 550) {
+				if (height > 650) {
 					$3cols.addClass("fixed");
 				} else {
 					$3cols.removeClass("fixed");
@@ -778,7 +779,7 @@ RocketBoots.loadComponents([
 			iteration++;
 			if (Object.keys(o.data.upgrades).length > 0) {
 				console.log("Launching Game!");
-				o.loadGame(true);
+				o.loadGame();
 			} else if (iteration < 40) {
 				console.log("Launch... Cannot start yet. " + iteration);
 				var launchTimer = window.setTimeout(function(){
@@ -808,10 +809,6 @@ RocketBoots.loadComponents([
 			if (typeof showNotice === 'boolean') { 
 				if (showNotice) this.notify("Game has been saved to this browser. Your game will be automatically loaded when you return.");
 			}
-			var $sn = this.$saveNotice;
-			$sn.show(400, function(){
-				$sn.fadeOut(1000);
-			});
 		}
 		
 		this.deleteGame = function() {
@@ -820,11 +817,11 @@ RocketBoots.loadComponents([
 			this.notify("Saved game deleted!");
 		}	
 		
-		this.loadGame = function (isStartLoop) {
+		this.loadGame = function () {
 			var o = this;
 			var isLoaded = false;
 			// Load game data (two objects)
-			console.log(localStorage.getItem("owned"), localStorage.getItem("total"));
+			console.log("checking localStorage", localStorage.getItem("owned"), localStorage.getItem("total"));
 			var loadedOwned = localStorage.getItem("owned");
 			if (loadedOwned !== null) {
 				o.owned = JSON.parse(loadedOwned);
@@ -840,21 +837,11 @@ RocketBoots.loadComponents([
 				o.isSoundOn = JSON.parse(loadedSound);
 			}		
 
-			$('body > header').fadeIn(5000);
+			$('body > header').fadeIn(200);
 			if (!isLoaded) {
 				$('.intro').fadeIn(1000);
 			} else {
-				o.calculateCoreValues();
-				o.writeUpgrades();
-				//o.addFlipCardEvents();
-				$('.metrics').slideDown(1000);
-				$('footer').slideDown(3000);
-				$('.progress').show(2000);
-				$('.threeCols').fadeIn(2000, function(){
-					if (isStartLoop) {
-						g.state.transition("game");
-					}
-				});
+				g.state.transition("game");
 			}
 		}
 

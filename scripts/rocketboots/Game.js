@@ -31,7 +31,7 @@
 		}
 		g._addStages(options);
 		g._addDefaultStates();
-		g._setupTransitionLinks();
+		g.state._setupTransitionLinks();
 		g.state.start("boot");
 		return this;
 	}
@@ -116,16 +116,6 @@
 		
 		//g.state.get("game").$view.show();
 
-		return g;
-	};
-
-	Game.prototype._setupTransitionLinks = function () {
-		var g = this;
-		// Setup state transition clicks
-		$('.goto').click(function(){
-			var stateName = $(this).data("state");
-			g.state.transition(stateName);
-		});
 		return g;
 	};
 

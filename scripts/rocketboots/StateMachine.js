@@ -80,6 +80,43 @@
 	}
 	//sm.prototype.init();
 
+	StateMachine.prototype._getStateFromElement = function (elt) {
+		var $elt = $(elt);
+		var stateName = $elt.data("state");
+		if (typeof stateName === 'undefined') {
+			stateName = $elt.attr("href");
+			if (stateName.substr(0, 1) === '#') {
+				stateName = stateName.substr(1);
+			}
+		}
+		return stateName;
+	}
+	StateMachine.prototype._setupTransitionLinks = function () {
+		var sm = this;
+		// Setup state transition clicks
+		$('.goto, .goto-state').click(function(e){
+			var stateName = sm._getStateFromElement(this);
+			sm.transition(stateName);
+		});
+		$('.toggle-state').click(function(e){
+			var $clicked = $(this);
+			var nextStateName = sm._getStateFromElement(this);
+			var lastStateName = $clicked.data("last-state");
+			console.log(lastStateName, sm.currentState.name, nextStateName);
+			if (nextStateName === sm.currentState.name) {
+				// TODO: Use `back` function?
+				sm.transition(lastStateName);
+				$clicked.removeClass("toggled-state-on");
+			} else {
+				$clicked.data("last-state", sm.currentState.name);
+				$clicked.addClass("toggled-state-on");
+				sm.transition(nextStateName);
+			}
+		});
+		return sm;
+	};
+
+
 	//==== State Class
 	StateMachine.prototype.State = function(name, settings){
 		this.name	= name;

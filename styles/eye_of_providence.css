@@ -1,6 +1,7 @@
 html {
 	min-height: 100%;
     margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
 	/* background: red; */
@@ -10,7 +11,7 @@ body {
 	height: 98%;
 	width: 98%;
 	padding: 0;
-	margin: 1%;
+	margin: 0 1% 1% 1%;
 	/* border: solid 1em rgba(0,0,0,0.5); */
 	/* box-shadow: inset 0 0 5em red; */
 	background-color: #bbb;
@@ -18,6 +19,7 @@ body {
 	background: linear-gradient(top, #eee, #201616) fixed;
 	background-attachment: fixed;
 	overflow: auto;
+	font-family: 'Sanchez', 'Oxygen', sans-serif;
 }
 
 button {
@@ -33,14 +35,15 @@ strong {
 
 /* === HEADER === */
 
-body > header {
+header {
 	height: 7em;
+	margin-top: 1%;
 	background-image: url('../images/octopus-eye_336x112.png');
 	background-size: 336px 112px;
 	background-repeat: no-repeat;
 	background-position: center center;
 }
-body > header > h1 {
+header > h1 {
 	width: 90%;
 	text-align: center;
 	margin: 0 auto;
@@ -64,6 +67,61 @@ body > header > h1 {
 		margin: 0 0 0 0;	
 		letter-spacing: 0;
 	}
+
+
+nav {
+	display: none;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	margin: 0 -1% 0 -1%;
+	text-align: center;
+	background-color: rgba(0,0,0,0.9);
+	font-family: 'Sanchez', 'Oxygen', sans-serif;
+	font-family: 'Permanent Marker', cursive;
+}
+	nav > a {
+		display: inline-block;
+		box-sizing: border-box;
+		width: 25%;
+		padding: 1em;
+		text-decoration: none;
+		color: white;
+		font-weight: bold;
+	}
+	nav > a:hover {
+		background-color: rgba(0,0,0,1);
+	}
+	nav > a:active {
+		background-color: white;
+		color: black;
+	}
+
+
+
+.side-nav-menu {
+	display: block;
+	position: absolute;
+	font-size: 12px;
+	right: 1em;
+	width: 44px;
+	height: 1em;
+	padding-top: 26px;
+	text-align: center;
+	background-position: top center;
+	background-color: rgba(0,0,0,0.2);
+	background-repeat: no-repeat;
+	background-image: url('../images/eye1_32x32.png');
+	font-family: 'Permanent Marker', cursive;
+	color: white;
+	text-decoration: none;
+	border-radius: 44px;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+	.side-nav-menu.toggled-state-on {
+		background-image: url('../images/eye2_32x32.png');
+	}
+
 
 section.intro
 ,section.walkthru {
@@ -320,7 +378,6 @@ section.progress {
 	padding: 1em 0;
 	margin: 0 0 1em 0;
 	/* border-bottom: 0.1em solid #333; */
-	font-family: 'Sanchez', 'Oxygen', sans-serif;
 	
 	text-align: center;
 	font-size: 1.2em;
@@ -533,55 +590,21 @@ section.progress {
 /* === FOOTER === */
 
 footer {
-	position: fixed;
-	bottom: 0; left: 0;
-	width: 100%;
-	padding: 0.5em 0;
-	clear:both;
-	text-align: center;
-	background-color: rgba(0,0,0,0.5);
-	box-shadow: 0 0 2em rgba(0,0,0,0.5);
-	font-family: 'Sanchez', serif;
-}
-.footerBar {
-	position: relative;
-}
-footer.open {
 
 }
 
-footer button.openFoot {
-	min-height: 32px;
-	min-width: 32px;
-	position: relative;
-	background: transparent;
-	color: #000;
-	border: 0;
-	cursor: pointer;
-	background-position: center center;
-	background-repeat: no-repeat;
-	opacity: 0.4;
-}
-footer button.openFoot:hover {
-	opacity: 1.0;
-}
-footer button.openFoot > span {
-	display: block;
-	position: absolute;
-	bottom: -0.5em;
-	left: 0;
-	color: white;
+/* === Other States === */
+
+.congrats {
+	font-size: 200%;
+	padding: 2em 0;
 	text-align: center;
-	width: 100%;
 }
-footer button.openFoot {
-	background-image: url('../images/eye1_32x32.png');
-}
-footer button.closeFoot {
-	opacity: 0.9;
-	background-image: url('../images/eye2_32x32.png');
-}
-footer .foot {
+
+
+/* === Menu === */
+
+.menu {
 	display: none;
 	padding: 1em;
 	margin: 1em 0 0 0;
@@ -591,24 +614,24 @@ footer .foot {
 	font-size: 120%;
 	-webkit-transition: all 0.5s;
 	transition: all 0.5s;
+	font-family: 'Sanchez', serif;
 }
-footer.open .foot {
-	display: block;
-}
-footer .foot > div {
-	float: left;
-	width: 45%;
-	margin: 0 2%;
-}
-.about {
-	text-shadow: 0 0.1em 0.3em black;
-}
-.about a {
-	color: #777E74;
-}
-.about a:visited {
-	color: #78777F;
-}
+	.menu > div {
+		float: left;
+		width: 45%;
+		min-width: 10em;
+		margin: 0 2%;
+	}
+		.about {
+			text-shadow: 0 0.1em 0.3em black;
+		}
+		.about a {
+			color: #777E74;
+		}
+		.about a:visited {
+			color: #78777F;
+		}
+
 .options button {
 	display: block;
 	margin: 1em auto;
@@ -616,23 +639,19 @@ footer .foot > div {
 	cursor: pointer;
 	font-family: 'Permanent Marker', cursive;
 	font-size: 140%;
+	border: solid .2em transparent;
 	border-radius: 0.5em;
 	background-color: #eee;
-	border: 0;
 }
-.options button.stopLoop
-,.options button.startLoop {
-	display: inline-block;
-	font-size: 90%;
-}
-
-.saveNotice {
-	display: none;
-	position: absolute;
-	top: 0.5em; right: 0.5em;
-	color: white;
-	text-shadow: 0 0 1em rgba(255,255,255,0.5);
-}
+	.options button:hover {
+		background-color: #fff;
+		border: solid .2em black;
+	}
+	.options button.stopLoop
+	,.options button.startLoop {
+		display: inline-block;
+		font-size: 90%;
+	}
 
 /* floating number */
 .click-earn {
@@ -780,7 +799,10 @@ footer .foot > div {
 
 	body {
 		background: #8C8888;
-	}	
+	}
+	header {
+		margin-top: 3.5em;
+	}
 	.threeCols > section {
 		width: auto;
 		float: none;
@@ -813,6 +835,16 @@ footer .foot > div {
 	.upgradeList {
 		max-height: 20em; overflow: auto;
 	}
-	*/	
+	*/
+	.menu > div {
+		width: 100%;
+	}
+
+	nav {
+		display: block;
+	}
+	.side-nav-menu {
+		display: none;
+	}
 }
 

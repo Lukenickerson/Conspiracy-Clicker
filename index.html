@@ -6,16 +6,27 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|Just+Me+Again+Down+Here|Sanchez' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Oxygen+Mono|Oxygen' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="styles/eye_of_providence.css" />	
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="styles/eye_of_providence.css" />
 </head>
 <body>
 
+	<nav>
+		<a href="#menu" class="toggle-state nav-menu">
+			Menu
+		</a><a href="#industry" class="showCol">
+			Industry
+		</a><a href="#politics" class="showCol">
+			Politics
+		</a><a href="#media" class="showCol">
+			Media
+		</a>
+	</nav>
 	<header>
+		<a href="#menu" class="toggle-state side-nav-menu">Menu</a>
 		<h1><span class="conspiracyWord">Conspiracy</span> <span class="clickerWord">Clicker</span> <span class="version"></span></h1>
 	</header>
 	
-	<section class="intro">
+	<section class="state intro">
 		<div class="nwo">
 			It is time that our organization fulfills the ancient prophecies 
 			and creates a New World Order!
@@ -41,10 +52,10 @@
 			Fortunately the political realm and the media are already easily subjugated 
 			by money; if we are patient with our conspiratorial schemes, we should not fail.
 		</p>
-		<button type="button" class="openWalkthru">Continue...</button>
+		<button type="button" class="goto" data-state="walkthru">Continue...</button>
 	</section>
 	
-	<section class="walkthru">
+	<section class="state walkthru">
 		<p>
 			This game is made up of three different sectors - Industry, Politics, Media - 
 			and three different currencies: money, votes, and controlled minds.
@@ -77,10 +88,10 @@
 			secure under your control. your progress can be measured with the progress bar at
 			the top (it takes a while for you to even register on it!).
 		</p>
-		<button type="button" class="openGame">Begin your Conspiracy...</button>
+		<button type="button" class="goto" data-state="game">Begin your Conspiracy...</button>
 	</section>
 	
-	<section class="progress">
+	<section class="progress state game">
 		<h2>Progress</h2>
 		<div class="progressBar">
 		</div>
@@ -88,8 +99,8 @@
 		</div>
 	</section>
 	
-	<div class="threeCols">
-		<section class="clearfix industry">
+	<div class="threeCols state game">
+		<section class="clearfix industry" id="industry">
 			<h2>Industry</h2>
 			<div class="focus">
 				<div class="clicker">
@@ -119,7 +130,7 @@
 				<li></li>
 			</ul>
 		</section>
-		<section class="clearfix politics">
+		<section class="clearfix politics" id="politics">
 			<h2>Politics</h2>
 			<div class="focus">
 				<div class="clicker">
@@ -166,7 +177,7 @@
 				<li></li>				
 			</ul>	
 		</section>
-		<section class="clearfix media">
+		<section class="clearfix media" id="media">
 			<h2>Media</h2>
 			<div class="focus">
 				<div class="clicker">
@@ -213,54 +224,59 @@
 			</ul>		
 		</section>
 	</div>
-	
-	
-	<footer>
-		<!-- *** Options for customizations -->
-		<!-- *** More info -->
-		<div class="footerBar">
-			<button type="button" class="openFoot"><span>open</span></button>
-			<div class="saveNotice">Saved</div>
+
+	<div class="state win">
+		<p class="congrats">
+			Congratulations, our conspiracy has dominated the world!
+		</p>
+		<div class="options">
+			<button type="button" class="goto" data-state="game">Keep Playing</button>
+			<button type="button" class="delete">Delete Saved Game and Restart</button>
 		</div>
-		<div class="foot">
-			<div class="options">
-				<!-- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> -->
-				<button type="button" class="toggleAutoSave">Toggle AutoSave</button>
-				<button type="button" class="save">Save Game Now</button>
-				<button type="button" class="load">Load Saved Game</button>
-				<button type="button" class="delete">Delete Saved Game</button>
-				<button type="button" class="toggleSound">Toggle Sound</button>
-				<button type="button" class="pause">Toggle Pause</button>
-			</div>
-			<div class="about">
-				<h2>About</h2>
-				<p>
-					Version <span class="version"></span>
-				</p>
-				<p>
-					Conspiracy Clicker was originally designed and created by Luke Nickerson in 
-					48 hours for mini-LD #48 in Jan 2014. Additional creative input by Jeffery M. Beach.
-				</p>
-				<p>
-					If you'd like to try out older versions you can play the 
-					<a href="http://deathraygames.com/play-online/miniLD48/">Original mini-LD version</a> or the <a href="archive/v1.0/">"Classic" version (1.0)</a>.
-				</p>
-				<p>
-					Inspired by <a href="http://orteil.dashnet.org/cookieclicker/" target="_blank">Cookie Clicker</a>
-					and <a href="http://www.sjgames.com/illuminati/" target="_blank">the Illuminati card game</a>.
-				</p>
-				<p>
-					All code and graphics is original and &copy; 
-					(aside from jQuery and Google Fonts).
-					The code is released on GitHub; please feel free to dissect it for learning purposes.
-					Futher information available at 
-					<a href="http://deathraygames.com/" target="_blank">Deathray Games</a>,
-					<a href="http://deathraygames.tumblr.com/" target="_blank">Tumblr</a>, or
-					<a href="http://www.ludumdare.com/compo/?author_name=deathray" target="_blank">Ludum Dare</a>.
-				</p>
-			</div>
+	</div>
+	
+	<div class="state menu">
+		<div class="options">
+			<!-- <button type="button" class="autoSave">Auto-Save: <span>ON</span></button> -->
+			<button type="button" class="goto" data-state="game">Resume Game</button>
+			<button type="button" class="toggleAutoSave">Toggle AutoSave</button>
+			<button type="button" class="save">Save Game Now</button>
+			<button type="button" class="load">Load Saved Game</button>
+			<button type="button" class="delete">Delete Saved Game</button>
+			<button type="button" class="toggleSound">Toggle Sound</button>
+			<button type="button" class="pause">Toggle Pause</button>
 		</div>
-	</footer>
+		<div class="about">
+			<h2>About</h2>
+			<p>
+				Version <span class="version"></span>
+			</p>
+			<p>
+				Conspiracy Clicker was originally designed and created by Luke Nickerson in 
+				48 hours for mini-LD #48 in Jan 2014. Additional creative input by Jeffery M. Beach.
+			</p>
+			<p>
+				If you'd like to try out older versions you can play the 
+				<a href="http://deathraygames.com/play-online/miniLD48/">Original mini-LD version</a> or the <a href="archive/v1.0/">"Classic" version (1.0)</a>.
+			</p>
+			<p>
+				Inspired by <a href="http://orteil.dashnet.org/cookieclicker/" target="_blank">Cookie Clicker</a>
+				and <a href="http://www.sjgames.com/illuminati/" target="_blank">the Illuminati card game</a>.
+			</p>
+			<p>
+				All code and graphics is original and copyrighted 
+				(or used by license, as with jQuery and Google Fonts).
+				The code is released on GitHub; please feel free to dissect it for learning purposes.
+				Futher information available at 
+				<a href="http://deathraygames.com/" target="_blank">Deathray Games</a>,
+				<a href="http://deathraygames.tumblr.com/" target="_blank">Tumblr</a>, or
+				<a href="http://www.ludumdare.com/compo/?author_name=deathray" target="_blank">Ludum Dare</a>.
+			</p>
+			<p>
+				&copy; 2014-2017
+			</p>
+		</div>	
+	</div>
 	
 	<div class="scripts">
 		<script src="scripts/libs/jquery-3.1.1.min.js"></script>
