@@ -26,7 +26,7 @@ button {
     outline: none;
 }
 
-section, header, footer {
+.state {
 	display: none;
 }
 strong {
@@ -141,6 +141,9 @@ section.intro
 	font-size: 130%;
 	line-height: 1.5em;
 }
+section.intro {
+	max-width: 40em;
+}
 	.nwo {
 		font-size: 140%;
 		font-family: 'Permanent Marker', cursive;
@@ -177,16 +180,10 @@ section.walkthru {
 section.progress {
 	position: relative;
 	text-align: center;
+	margin: 0 auto;
 }
-	section.progress h2 {
-		font-family: 'Sanchez', 'Permanent Marker', cursive;
-		position: absolute;
-		color: rgba(0,0,0,0.25);
-		font-size: 0.8em;
-		line-height: 2em;
-		margin: 0; padding: 0 0 0 0.5em;
-	}
-	.mindControlPercent, .upgradeUnlockedPercent {
+	.mindControlPercent, 
+	.upgradeUnlockedPercent {
 		position: absolute;
 		top: 0;
 		font-family: 'Sanchez', 'Permanent Marker', cursive;
@@ -740,10 +737,6 @@ footer {
 
 @media only screen and (max-width : 700px) {
 
-	body {
-		background: #8C8888;
-	}
-
 	body > header > h1 {
 		font-size: 110%;
 	}
@@ -804,6 +797,10 @@ footer {
 		font-size: 90%;
 	}
 	
+	.mindControlPercent, 
+	.upgradeUnlockedPercent {
+		display: none;
+	}
 
 }
 
@@ -825,9 +822,6 @@ footer {
 
 @media only screen and (max-width : 400px) {
 
-	body {
-		background: #8C8888;
-	}
 	header {
 		margin-top: 3.5em;
 	}

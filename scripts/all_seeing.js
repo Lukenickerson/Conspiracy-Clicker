@@ -854,7 +854,7 @@ RocketBoots.loadComponents([
 				o.isSoundOn = JSON.parse(loadedSound);
 			}		
 
-			$('body > header').fadeIn(200);
+			//$('body > header').fadeIn(200);
 			if (!isLoaded) {
 				$('.intro').fadeIn(1000);
 			} else {
