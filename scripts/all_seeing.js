@@ -684,17 +684,7 @@ RocketBoots.loadComponents([
 			$('.toggleAutoSave').click(function(e){
 				o.isAutoSaveOn = !o.isAutoSaveOn;
 				o.notify("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
-			});		
-			
-			/* Intro */
-			$('.openWalkthru').click(function(e){
-				g.state.transition("walkthru");
 			});
-			$('.openGame').click(function(e){
-				g.state.transition("game");
-			});
-			
-			
 			
 			
 			var $arrows = $('.focus .arrow');
@@ -753,15 +743,6 @@ RocketBoots.loadComponents([
 					$3cols.addClass("fixed");
 				} else {
 					$3cols.removeClass("fixed");
-				}
-			});
-			
-			
-			$('.pause').click(function(e){ 	
-				if (g.state.current.name === "game") {
-					g.state.transition("pause");
-				} else {
-					g.state.transition("game");
 				}
 			});
 			

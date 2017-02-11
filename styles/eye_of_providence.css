@@ -72,11 +72,12 @@ header > h1 {
 nav {
 	display: none;
 	position: fixed;
+	z-index: 10;
 	top: 0;
 	width: 100%;
 	margin: 0 -1% 0 -1%;
 	text-align: center;
-	background-color: rgba(0,0,0,0.9);
+	background-color: rgba(0,0,0,0.85);
 	font-family: 'Sanchez', 'Oxygen', sans-serif;
 	font-family: 'Permanent Marker', cursive;
 }
