@@ -185,28 +185,47 @@ RocketBoots.loadComponents([
 		//=============================================== OUTPUT DISPLAY
 
 		this.displayProgress = function () {
-			
+			var highVal = 0,
+				lowVal = 0,
+				totalControlled = 0,
+				controlProgress = 0,
+				unlockPercent = 0,
+				combinedPercent = 0;
+			var upgradeCounts = this.getUpgradeCounts();
+
 			if (this.total.votes > this.total.minds) {
-				var highVal = this.total.votes;
-				var lowVal = this.total.minds;
+				highVal = this.total.votes;
+				lowVal = this.total.minds;
 			} else {
-				var highVal = this.total.minds;
-				var lowVal = this.total.votes;		
+				highVal = this.total.minds;
+				lowVal = this.total.votes;		
 			}
-			var totalControlled = highVal + (lowVal/2);
+			totalControlled = highVal + (lowVal/2);
 			if (totalControlled > this.totalPopulation) {
 				totalControlled = this.totalPopulation;
 			}
-			var progressPercent = (totalControlled / this.totalPopulation) * 100;
-			if (progressPercent < 0) {
-				progressPercent = Math.round( progressPercent * 100000 ) / 100000;
+			controlProgress = (totalControlled / this.totalPopulation) * 100;
+			if (controlProgress < 0) {
+				controlProgress = Math.round( controlProgress * 100000 ) / 100000;
 			} else {
-				progressPercent = Math.round( progressPercent * 10 ) / 10;
+				controlProgress = Math.round( controlProgress * 10 ) / 10;
 			}
-			this.$progressVal.html(progressPercent + "%");
-			this.$progressBar.html('<div style="width: ' + progressPercent + '%"></div>');
+
+			unlockPercent =  Math.floor((upgradeCounts.uniqueOwned / upgradeCounts.uniqueTotal) * 100);
+
+			combinedPercent = (controlProgress + unlockPercent) / 2;
+
+			// Display
+
+			this.$mindControlPercent.html(controlProgress);
+			this.$upgradeUnlockedPercent.html(unlockPercent);
+
+			this.$progressVal.html(combinedPercent + "%");
+			this.$progressBar.html('<div style="width: ' + combinedPercent + '%"></div>');
 			
-			if (progressPercent == 100 && !this.winShown) {
+			// Check for win
+
+			if (combinedPercent == 100 && !this.winShown) {
 				g.state.transition("win");
 				this.winShown = true;
 			}
@@ -408,8 +427,30 @@ RocketBoots.loadComponents([
 			});
 		}
 		
+		this.getUpgradeCounts = function () {
+			var upgradeCounts = { 
+				"industry" : 0, "politics" : 0, "media" : 0, 
+				"total": 0, 
+				"uniqueOwned": 0,
+				"uniqueTotal": 0,
+			};
+			for (var s in this.sectorArray) {
+				var sector = this.sectorArray[s];
+				var sectorUpgrades = this.owned.upgrades[sector];
+				for (var ugi in sectorUpgrades) {
+					upgradeCounts[sector] += sectorUpgrades[ugi];
+					upgradeCounts.total += sectorUpgrades[ugi];
+					upgradeCounts.uniqueTotal += 1;
+					if (sectorUpgrades[ugi] > 0) {
+						upgradeCounts.uniqueOwned += 1;
+					}
+				}
+			}
+			return upgradeCounts;
+		};
 		
 		this.setDefaults = function () {
+			var upgradeCounts = this.getUpgradeCounts();
 			this.perSecond = {
 				indMoney	: 0
 				,polMoney	: 0
@@ -417,17 +458,6 @@ RocketBoots.loadComponents([
 				,votes		: 0
 				,minds		: 0
 			};
-			// Count the number of upgrades
-			var totalUpgradeCount = 0;
-			var upgradeCounts = { "industry" : 0, "politics" : 0, "media" : 0 };
-			for (var s in this.sectorArray) {
-				var sector = this.sectorArray[s];
-				var sectorUpgrades = this.owned.upgrades[sector];
-				for (var ugi in sectorUpgrades) {
-					upgradeCounts[sector] += sectorUpgrades[ugi];
-					totalUpgradeCount += sectorUpgrades[ugi];
-				}
-			}
 			this.perClick = {
 				indMoney	: (1.0 + (upgradeCounts.industry / 5))
 				,polMoney	: (1.0 + (upgradeCounts.politics / 5))
@@ -435,7 +465,7 @@ RocketBoots.loadComponents([
 				,votes		: (0.0)
 				,minds		: (0.0)
 			};
-			this.flow.baseSpeed = 1.0 + (totalUpgradeCount / 20);
+			this.flow.baseSpeed = 1.0 + (upgradeCounts.total / 20);
 			return true;
 		}
 		
@@ -657,6 +687,9 @@ RocketBoots.loadComponents([
 			
 			o.$progressVal = $('.progress .progressVal');
 			o.$progressBar = $('.progress .progressBar');
+
+			o.$mindControlPercent = $('.mindControlPercent .val');
+			o.$upgradeUnlockedPercent = $('.upgradeUnlockedPercent .val');
 			
 			$indClicker.click(function(e){	o.industryClick(e); });
 			$polClicker.click(function(e){	o.politicsClick(e); });

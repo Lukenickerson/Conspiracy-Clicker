@@ -15,8 +15,8 @@ body {
 	/* border: solid 1em rgba(0,0,0,0.5); */
 	/* box-shadow: inset 0 0 5em red; */
 	background-color: #bbb;
-	background: -webkit-linear-gradient(top, #eee, #201616) fixed;
-	background: linear-gradient(top, #eee, #201616) fixed;
+	background: -webkit-linear-gradient(top, #bbb, #201616) fixed;
+	background: linear-gradient(top, #bbb, #201616) fixed;
 	background-attachment: fixed;
 	overflow: auto;
 	font-family: 'Sanchez', 'Oxygen', sans-serif;
@@ -186,6 +186,22 @@ section.progress {
 		line-height: 2em;
 		margin: 0; padding: 0 0 0 0.5em;
 	}
+	.mindControlPercent, .upgradeUnlockedPercent {
+		position: absolute;
+		top: 0;
+		font-family: 'Sanchez', 'Permanent Marker', cursive;
+		color: rgba(0,0,0,0.5);
+		font-size: 0.8em;
+		line-height: 2em;
+		z-index: 2;
+	}
+	.mindControlPercent {
+		left: 1em;
+	}
+	.upgradeUnlockedPercent {
+		right: 1em;
+	}
+
 	.progressVal {
 		font-family: 'Permanent Marker', cursive;
 		position: absolute;
