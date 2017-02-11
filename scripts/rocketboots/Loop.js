@@ -26,11 +26,12 @@
 			}, o.delay);
 		}			
 	}
+	/*
 	Loop.prototype._safeReloop = function(o){
 		if (o.isLooping) {
 			o.iteration++;
 			// --- Safety to prevent infinite loops ---
-			if (o.iteration < 15000000) {
+			if (o.iteration < 15000000) { // Use Number.MAX_SAFE_INTEGER ?
 				o.timer = window.setTimeout(function(){
 					o.loop(); 
 				}, o.delay); 
@@ -40,6 +41,7 @@
 			}
 		}			
 	}
+	*/
 	
 	Loop.prototype.loop = function(){
 		var o = this;
@@ -90,7 +92,7 @@
 	Loop.prototype.setFunction = function(fn){
 		this.fn	= ((typeof fn === 'function') ? fn : function(){});
 		return this;
-	}
+	};
 
 	Loop.prototype.setDelay = function(d){
 		this.delay = d || 14;
@@ -104,33 +106,65 @@
 		// Needs to be less than 16 to accomodate for the time it takes to run the loop 'stuff'		
 		this.framesPerSecond = (1000 / this.delay);
 		this.secondsPerLoop	= (this.delay / 1000);
+		// TODO: This should also change all the modulus actions that are defined
 		return this;
-	}
-	
-	Loop.prototype.addModulusAction = function(tps, fn)
-	{
-		// tps = times per second
-		// framesPerSecond = once per second
-		// framesPerSecond/2 = twice per second
-		var ma = {
-			loopModulus : Math.round(this.framesPerSecond/tps),
-			loopFunction : fn
-		};
-		this.modulusActions.push(ma);
-		this.numOfModulusActions = this.modulusActions.length;
-		return (this.modulusActions.length - 1);
-	}
-	Loop.prototype.removeModulusAction = function(index)
-	{	
-		return this.modulusActions.splice(index, 1);
-	}
+	};
 
 	Loop.prototype.set = function(fn, delay) {
 		if (typeof fn !== 'function') { fn = function(){}; }
 		this.setFunction(fn)
 			.setDelay(delay);
 		return this;
-	}
+	};
+
+	Loop.prototype.addModulusAction = function(tps, fn, id) {
+		// tps = times per second
+		// framesPerSecond = once per second
+		// framesPerSecond/2 = twice per second
+		var ma = {
+			id: id,
+			loopModulus: Math.round(this.framesPerSecond/tps),
+			loopFunction: fn
+		};
+		if (typeof ma.id !== 'string') {
+			ma.id = 'Action-' + Number(new Date()) + Math.round(Math.random() * 1000000);
+		}
+		this.modulusActions.push(ma);
+		this.numOfModulusActions = this.modulusActions.length;
+		return (this.modulusActions.length - 1);
+	};
+
+	Loop.prototype.removeModulusAction = function(index) {	
+		return this.modulusActions.splice(index, 1);
+	};
+
+	// Some additional shorthand functions for more options, and which are more readable
+	Loop.prototype.addAction = function (fn, ms, id) {
+		if (ms < this.delay) {
+			console.warn("Adding an action to occur more frequent than the delay will not work correctly.");
+		}
+		var tps = 1 / (ms / 1000);
+		this.addModulusAction(tps, fn, id);
+		return this;
+	};
+
+	Loop.prototype.removeAction = function (id) {
+		for (var mai = 0; mai < this.numOfModulusActions; mai++){
+			if (this.modulusActions[mai].id === id) {
+				return this.removeModulusAction(mai);
+			}
+		}
+		return false;
+	};
+
+	Loop.prototype.addActionPerSecond = function (fn, seconds, id) {
+		if (typeof seconds !== 'number') {
+			seconds = 1;
+		}
+		var ms = seconds * 1000;
+		return this.addAction(fn, ms, id);
+	};
+
 	
 	
 

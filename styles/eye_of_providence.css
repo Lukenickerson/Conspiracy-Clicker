@@ -612,7 +612,7 @@ footer .foot > div {
 .options button {
 	display: block;
 	margin: 1em auto;
-	min-width: 6em;
+	min-width: 10em;
 	cursor: pointer;
 	font-family: 'Permanent Marker', cursive;
 	font-size: 140%;
@@ -634,14 +634,18 @@ footer .foot > div {
 	text-shadow: 0 0 1em rgba(255,255,255,0.5);
 }
 
+/* floating number */
 .click-earn {
 	display: block;
 	position: absolute;
 	background-color: rgba(255,255,255,0.5);
 	padding: 0.25em 0.5em;
 	border-radius: 1em;
-	font-family: 'Permanent Marker', cursive;
+	/* font-family: 'Permanent Marker', cursive; 
 	font-size: 130%;
+	*/
+	font-family: 'Oxygen Mono', monospace;
+	font-size: 120%;
 	box-shadow: 0 1em 1em rgba(0,0,0,0.2);
 }
 

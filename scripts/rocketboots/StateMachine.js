@@ -13,6 +13,11 @@
 		this.history = [];
 		this._pruneHistoryAt = 200;
 		this._pruneHistoryTo = 100;
+		// Alias
+		Object.defineProperty(this, "current", { 
+			get: function(){ return this.currentState; }, 
+			set: function(x){ this.currentState = x; } 
+		});
 	}
 
 	// Getters

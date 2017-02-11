@@ -5,6 +5,21 @@ RocketBoots.loadComponents([
 	"Dice"
 ]).ready(function(rb){
 
+	//==== CONSTANTS
+
+	var LOOP_DELAY 			= 10,
+		// 1000 = 1 second
+		// 100 = 1/10th of a second
+		// 10 = 1/100th of a second (better than 60 fps)
+		SECONDS_PER_LOOP 	= (LOOP_DELAY / 1000),
+		// Update certain things once every X iterations
+		// 10 ==> once per second
+		LOOP_MODULUS		= 10,
+		SAVE_EVERY_MS		= 10000 // 10 seconds
+	; 
+
+	//==== GAME, STATES, MAIN LOOP
+
 	var g = new RocketBoots.Game({
 		name: "Conspiracy Clicker",
 		instantiateComponents: [
@@ -15,23 +30,53 @@ RocketBoots.loadComponents([
 		]
 	});
 	g.version = "beta-1.1.0";
+	g.cc = new CCGameClass();
 
-	/* === Conspiracy Clicker Game === */
+	g.state.addStates({
+		"intro": {
 
-	var CCGameClass = function () {
-		this.isLooping 		= false;
-		this.loopTimer 		= 0;
-		this.loopIteration 	= 0;
-		this.lastTime 		= 0;
+		},
+		"start": {
+
+		},
+		"game": {
+			viewName: "game",
+			start: function(){
+				g.loop.start();
+			},
+			end: function(){
+				g.loop.stop();
+			}
+		},
+		"pause": {
+
+		}
+	});
+
+	g.loop.set(function(iteration){
+		// TODO: Use incrementer
+		//g.incrementer.incrementByElapsedTime(undefined, true);
+		//g.incrementer.calculate();
+		g.cc.incrementTotals(iteration);
+	}, LOOP_DELAY).addActionPerSecond(function(){
+		g.cc.calculateCoreValues();
+		g.cc.displayPerSecondNumbers();
+		g.cc.displayPerClickNumbers();
+	}, 0.6).addActionPerSecond(function(){
+		g.cc.displayProgress();
+		g.cc.updateUpgradeAfford();
+	}, 1).addActionPerSecond(function(){
+		g.cc.autoSaveGame();
+	}, 2);
+
+	g.cc.setup(); // TODO: move this to state machine
+
+
+	/* === Original Conspiracy Clicker Game === */
+
+	function CCGameClass () {
 		// Constants
-		this.loopDelay		= 10;
-		// 1000 = 1 second
-		// 100 = 1/10th of a second
-		// 10 = 1/100th of a second (better than 60 fps)
-		this.secondsPerLoop	= (this.loopDelay / 1000);
-		// Update certain things once every X iterations
-		// 10 ==> once per second
-		this.loopModulus	= 10; 
+
 		this.totalPopulation = 314000000;
 		
 		// Static Data
@@ -100,76 +145,13 @@ RocketBoots.loadComponents([
 
 		//=============================================== MAIN LOOP
 		
-		this.loop = function() {
+		this.incrementTotals = function(iteration) {
 			var o = this;
-			//console.log("loop");
-		
 			o.loopOverCurrencies(function(curr){
-				o.incrementCurrency(curr, o.secondsPerLoop);
+				o.incrementCurrency(curr, SECONDS_PER_LOOP);
 			});
-		
-			o.displayNumber(o.total.indMoney, o.$indMoneyVal);
-			o.displayNumber(o.total.polMoney, o.$polMoneyVal);
-			o.displayNumber(o.total.medMoney, o.$medMoneyVal);
-			o.displayNumber(o.total.votes, o.$votesVal);
-			o.displayNumber(o.total.minds, o.$mindsVal);
-			
-			// Update these only every second or so... 
-			if ((o.loopIteration % o.loopModulus) == 0) {
-				o.calculateCoreValues();
-				o.displayPerSecondNumbers();
-				// Per click...
-				o.displayNumber(o.perClick.indMoney, o.$indMoneyPerClickVal);
-				o.displayNumber(o.perClick.polMoney, o.$polMoneyPerClickVal);
-				o.displayNumber(o.perClick.medMoney, o.$medMoneyPerClickVal);
-				o.displayNumber(o.perClick.votes, o.$votesPerClickVal);
-				o.displayNumber(o.perClick.minds, o.$mindsPerClickVal);
-			} else if (((o.loopIteration + 1) % o.loopModulus) == 0) {
-				o.displayProgress();
-				o.updateUpgradeAfford();
-			} else if (((o.loopIteration + 2) % o.loopModulus) == 0) {
-				/*
-				if (o.flow.from != "" && o.flow.to != "") {
-					var flowSpeed = o.flow.baseSpeed + (o.flow.percentSpeed * o.total[o.flow.from]);
-					if (o.total[o.flow.from] >= flowSpeed) {
-						o.total[o.flow.from] -= flowSpeed;
-						o.total[o.flow.to] += (flowSpeed * o.flow.efficiency);
-					}
-				}
-				*/
-				// Check for auto-save
-				if (o.isAutoSaveOn) {
-					var now = new Date();
-					if ((now - o.lastSaveDateTime) > 10000) {
-						o.saveGame();
-					}
-				}
-			}
-		
-			if (o.isLooping) {
-				o.loopIteration++;
-				if (o.loopIteration < 15000000) {
-					o.loopTimer = window.setTimeout(function(){
-						o.loop();
-					}, o.loopDelay);
-				} else { // restart so iteration doesn't get too high
-					o.stopLoop();
-					o.startLoop();
-				}
-			}
-		}
-
-		this.startLoop = function() {
-			this.loopIteration = 0;
-			this.isLooping = true;
-			this.loop();
-		}
-		
-		this.stopLoop = function() {
-			this.loopIteration = 0;
-			this.isLooping = false;
-			clearTimeout(this.loopTimer);
-		}
+			o.displayTotals();
+		};
 
 		
 		//=============================================== OUTPUT DISPLAY
@@ -202,6 +184,14 @@ RocketBoots.loadComponents([
 			}
 		}
 		
+		this.displayTotals = function () {
+			this.displayNumber(this.total.indMoney, this.$indMoneyVal);
+			this.displayNumber(this.total.polMoney, this.$polMoneyVal);
+			this.displayNumber(this.total.medMoney, this.$medMoneyVal);
+			this.displayNumber(this.total.votes, this.$votesVal);
+			this.displayNumber(this.total.minds, this.$mindsVal);
+		};
+
 		this.displayPerSecondNumbers = function () {
 			// Per second...
 			this.displayNumber(this.perSecond.indMoney, this.$indMoneyPerSecondVal);
@@ -209,7 +199,15 @@ RocketBoots.loadComponents([
 			this.displayNumber(this.perSecond.medMoney, this.$medMoneyPerSecondVal);
 			this.displayNumber(this.perSecond.votes, this.$votesPerSecondVal);
 			this.displayNumber(this.perSecond.minds, this.$mindsPerSecondVal);	
-		}
+		};
+
+		this.displayPerClickNumbers = function () {
+			this.displayNumber(this.perClick.indMoney, this.$indMoneyPerClickVal);
+			this.displayNumber(this.perClick.polMoney, this.$polMoneyPerClickVal);
+			this.displayNumber(this.perClick.medMoney, this.$medMoneyPerClickVal);
+			this.displayNumber(this.perClick.votes, this.$votesPerClickVal);
+			this.displayNumber(this.perClick.minds, this.$mindsPerClickVal);
+		};
 		
 		this.displayNumber = function (n, $elt) {
 			//console.log($elt);
@@ -361,7 +359,7 @@ RocketBoots.loadComponents([
 		}
 
 		this.animateClickEarning = function (amount, evt) {
-			var x = evt.clientX, y = evt.clientY;
+			var x = evt.pageX, y = evt.pageY;
 			var $div = $('<div class="click-earn">+$' + amount + '</div>').css({
 				//position: "absolute",
 				opacity: 1
@@ -758,8 +756,13 @@ RocketBoots.loadComponents([
 			});
 			
 			
-			$('.stopLoop').click(function(e){ 	o.stopLoop(); });
-			$('.startLoop').click(function(e){ 	o.startLoop(); });
+			$('.pause').click(function(e){ 	
+				if (g.state.current.name === "game") {
+					g.state.transition("pause");
+				} else {
+					g.state.transition("game");
+				}
+			});
 			
 			//$('.upgradeList > li').click(function(e){	o.buyUpgrade(1); });
 
@@ -786,6 +789,15 @@ RocketBoots.loadComponents([
 			}
 		}
 		
+		this.autoSaveGame = function () {
+			if (this.isAutoSaveOn) {
+				var now = new Date();
+				if ((now - this.lastSaveDateTime) > SAVE_EVERY_MS) {
+					this.saveGame();
+				}
+			}
+		};
+
 		this.saveGame = function(showNotice) {
 			localStorage.setItem("owned", JSON.stringify(this.owned));
 			localStorage.setItem("total", JSON.stringify(this.total));
@@ -840,7 +852,7 @@ RocketBoots.loadComponents([
 				$('.progress').show(2000);
 				$('.threeCols').fadeIn(2000, function(){
 					if (isStartLoop) {
-						o.startLoop();
+						g.state.transition("game");
 					}
 				});
 			}
@@ -849,7 +861,7 @@ RocketBoots.loadComponents([
 		
 		//========================================= SOUND
 
-		this.isSoundOn = true;
+		this.isSoundOn = false;
 		
 		this.toggleSound = function (forceSound) {
 			if (typeof forceSound === 'boolean') 	this.isSoundOn = forceSound;
@@ -866,19 +878,12 @@ RocketBoots.loadComponents([
 			,"transfer1" 	: new Audio("sounds/transfer1.mp3")
 			,"upgrade1" 	: new Audio("sounds/upgrade1.mp3")
 			,"shock1" 	: new Audio("sounds/shock1.mp3")
-		}
-		/*
-		this.sounds["jibber1"].volume = 0.6;
-		this.sounds["jibber2"].volume = 0.6;
-		this.sounds["jibber3"].volume = 0.6;
-		this.sounds["jibber4"].volume = 0.6;
-		this.sounds["glassian"].volume = 0.4;
-		*/	
+		}	
 		
 		this.playSound = function (soundName, isLooped) {
 			if (this.isSoundOn) {	
 				if (soundName == "coin" || soundName == "dud") {
-					soundName += this.roll1d(2);
+					soundName += g.dice.roll1d(2);
 				}	
 				if (typeof this.sounds[soundName] === 'undefined') {
 					console.log("Sound does not exist: " + soundName);
@@ -897,10 +902,6 @@ RocketBoots.loadComponents([
 		
 		//========================================= Helpers
 		
-		this.roll1d = function (sides) {
-			return (Math.floor(Math.random()*sides) + 1);
-		}	
-		
 		this.getCommaSeparatedNumber = function (val) {
 			// From: http://stackoverflow.com/a/12947816/1766230
 			while (/(\d+)(\d{3})/.test(val.toString())){
@@ -916,12 +917,6 @@ RocketBoots.loadComponents([
 		if (!window.jQuery) { alert("ERROR - jQuery is not loaded!"); }
 	}
 
-	var cc = new CCGameClass();
-	cc.setup();
-
 	// Expose to the window object for debugging
 	window.g = g;
-	window.g.cc = cc;
-
-
 });
