@@ -634,6 +634,17 @@ footer .foot > div {
 	text-shadow: 0 0 1em rgba(255,255,255,0.5);
 }
 
+.click-earn {
+	display: block;
+	position: absolute;
+	background-color: rgba(255,255,255,0.5);
+	padding: 0.25em 0.5em;
+	border-radius: 1em;
+	font-family: 'Permanent Marker', cursive;
+	font-size: 130%;
+	box-shadow: 0 1em 1em rgba(0,0,0,0.2);
+}
+
 
 /* Helpers */
 

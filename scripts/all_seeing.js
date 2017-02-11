@@ -1,7 +1,8 @@
 RocketBoots.loadComponents([
 	"StateMachine",
 	"Loop",
-	"Incrementer"
+	"Incrementer",
+	"Dice"
 ]).ready(function(rb){
 
 	var g = new RocketBoots.Game({
@@ -9,7 +10,8 @@ RocketBoots.loadComponents([
 		instantiateComponents: [
 			{"state": "StateMachine"},
 			{"loop": "Loop"},
-			{"incrementer": "Incrementer"}
+			{"incrementer": "Incrementer"},
+			{"dice": "Dice"}
 		]
 	});
 	g.version = "beta-1.1.0";
@@ -338,21 +340,46 @@ RocketBoots.loadComponents([
 		
 		//=============================================== Numbers
 		
-		this.industryClick = function () {
+		this.industryClick = function (evt) {
 			this.playSound("coin1");
 			this.total.indMoney += this.perClick.indMoney;
+			this.animateClickEarning(this.perClick.indMoney, evt);
 		}
 
-		this.politicsClick = function () {
+		this.politicsClick = function (evt) {
 			this.playSound("coin2");
 			this.total.polMoney += this.perClick.polMoney;
 			//this.total.votes += this.perClick.votes;
+			this.animateClickEarning(this.perClick.polMoney, evt);
 		}
 
-		this.mediaClick = function () {
+		this.mediaClick = function (evt) {
 			this.playSound("coin1");
 			this.total.medMoney += this.perClick.medMoney;
 			//this.total.minds += this.perClick.votes;
+			this.animateClickEarning(this.perClick.medMoney, evt);
+		}
+
+		this.animateClickEarning = function (amount, evt) {
+			var x = evt.clientX, y = evt.clientY;
+			var $div = $('<div class="click-earn">+$' + amount + '</div>').css({
+				//position: "absolute",
+				opacity: 1
+			}).appendTo('body');
+			x = x - ($div.width() / 2); // center
+			y = y - ($div.height() * 1.5); // go above cursor
+			$div.css({ 
+				top: 	y + "px",
+				left: 	x + "px"
+			});
+			$div.animate({
+				top: (y - 200) + "px",
+				left: (x + g.dice.getRandomAround(100)) + "px",
+				opacity: 0,
+				fontSize: "80%"
+			}, 1000, function(){
+				$div.remove();
+			});
 		}
 		
 		
@@ -607,9 +634,9 @@ RocketBoots.loadComponents([
 			
 			o.$saveNotice = $('.saveNotice');
 			
-			$indClicker.click(function(e){	o.industryClick(); });
-			$polClicker.click(function(e){	o.politicsClick(); });
-			$medClicker.click(function(e){	o.mediaClick(); });
+			$indClicker.click(function(e){	o.industryClick(e); });
+			$polClicker.click(function(e){	o.politicsClick(e); });
+			$medClicker.click(function(e){	o.mediaClick(e); });
 			
 			$('.openFoot').click(function(e){
 				var $this = $(this);
