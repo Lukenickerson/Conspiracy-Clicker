@@ -85,6 +85,7 @@ nav {
 		display: inline-block;
 		box-sizing: border-box;
 		width: 25%;
+		height: 100%;
 		padding: 1em;
 		text-decoration: none;
 		color: white;
@@ -97,6 +98,14 @@ nav {
 		background-color: white;
 		color: black;
 	}
+
+	body.scrolled-down nav {
+		display: block;
+	}
+
+	nav > a.industry { color: rgba(203,199,163,1); }
+	nav > a.politics { color: rgba(163,191,161,1); }
+	nav > a.media { color: rgba(156,165,185,1);}
 
 
 
@@ -396,6 +405,7 @@ section.progress {
 .politics .metrics {	background-color: rgba(0,150,0,0.2); }
 .media .metrics {		background-color: rgba(0,50,150,0.2); }
 
+/*
 .fixed .metrics {
 	position: fixed;
 	top: 0;
@@ -413,6 +423,7 @@ section.progress {
 .fixed .media .metrics {	background-color: rgba(170,180,200,1); 
 	background-image: url('../images/media_200x200.png');
 }
+*/
 
 	.mainMetric {
 		font-size: 140%;
@@ -420,7 +431,7 @@ section.progress {
 	.metrics .perClick {
 		display: none;
 	}
-	.metrics .money:before {
+	.money:before {
 		display: inline-block;
 		margin-right: 0.5em;
 		content: '$';

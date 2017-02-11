@@ -634,29 +634,29 @@ RocketBoots.loadComponents([
 
 			$('.version').html(g.version);
 			
-			var $indClicker = $('section.industry .clicker');
-			var $polClicker = $('section.politics .clicker');
-			var $medClicker = $('section.media .clicker');
-			o.$indMoneyVal 			= $('section.industry .money .val');
-			o.$indMoneyPerClickVal 	= $('section.industry .profitPerClick .val');
-			o.$indMoneyPerSecondVal	= $('section.industry .profitPerSecond .val');
+			var $indClicker = $('.industry .clicker');
+			var $polClicker = $('.politics .clicker');
+			var $medClicker = $('.media .clicker');
+			o.$indMoneyVal 			= $('.industry .money .val');
+			o.$indMoneyPerClickVal 	= $('.industry .profitPerClick .val');
+			o.$indMoneyPerSecondVal	= $('.industry .profitPerSecond .val');
 			
-			o.$polMoneyVal 			= $('section.politics .money .val');
-			o.$polMoneyPerClickVal	= $('section.politics .profitPerClick .val');
-			o.$polMoneyPerSecondVal = $('section.politics .profitPerSecond .val');
-			o.$votesVal				= $('section.politics .votes .val');
-			o.$votesPerClickVal 	= $('section.politics .votesPerClick .val');
-			o.$votesPerSecondVal 	= $('section.politics .votesPerSecond .val');
+			o.$polMoneyVal 			= $('.politics .money .val');
+			o.$polMoneyPerClickVal	= $('.politics .profitPerClick .val');
+			o.$polMoneyPerSecondVal = $('.politics .profitPerSecond .val');
+			o.$votesVal				= $('.politics .votes .val');
+			o.$votesPerClickVal 	= $('.politics .votesPerClick .val');
+			o.$votesPerSecondVal 	= $('.politics .votesPerSecond .val');
 			
-			o.$medMoneyVal 				= $('section.media .money .val');
-			o.$medMoneyPerClickVal 		= $('section.media .profitPerClick .val');
-			o.$medMoneyPerSecondVal 	= $('section.media .profitPerSecond .val');
-			o.$mindsVal 				= $('section.media .minds .val');
-			o.$mindsPerClickVal 		= $('section.media .mindsPerClick .val');
-			o.$mindsPerSecondVal 		= $('section.media .mindsPerSecond .val');		
+			o.$medMoneyVal 				= $('.media .money .val');
+			o.$medMoneyPerClickVal 		= $('.media .profitPerClick .val');
+			o.$medMoneyPerSecondVal 	= $('.media .profitPerSecond .val');
+			o.$mindsVal 				= $('.media .minds .val');
+			o.$mindsPerClickVal 		= $('.media .mindsPerClick .val');
+			o.$mindsPerSecondVal 		= $('.media .mindsPerSecond .val');		
 			
-			o.$progressVal = $('section.progress .progressVal');
-			o.$progressBar = $('section.progress .progressBar');
+			o.$progressVal = $('.progress .progressVal');
+			o.$progressBar = $('.progress .progressBar');
 			
 			$indClicker.click(function(e){	o.industryClick(e); });
 			$polClicker.click(function(e){	o.politicsClick(e); });
@@ -735,14 +735,17 @@ RocketBoots.loadComponents([
 			
 			// Scroll Event
 			var $win = $(window);
-			var $3cols = $('.threeCols');
+			//var $3cols = $('.threeCols');
+			var $body = $('body');
 			$win.scroll(function() {
 				var height = $win.scrollTop();
-				//console.log(height);
-				if (height > 650) {
-					$3cols.addClass("fixed");
+				if (height > 450) {
+					$body.addClass("scrolled-down");
+					//$3cols.addClass("fixed");
 				} else {
-					$3cols.removeClass("fixed");
+					$body.removeClass("scrolled-down");
+					//$3cols.removeClass("fixed");
+
 				}
 			});
 			
