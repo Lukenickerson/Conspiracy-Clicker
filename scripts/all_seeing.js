@@ -2,7 +2,8 @@ RocketBoots.loadComponents([
 	"StateMachine",
 	"Loop",
 	"Incrementer",
-	"Dice"
+	"Dice",
+	"SoundBank"
 ]).ready(function(rb){
 
 	//==== CONSTANTS
@@ -26,13 +27,25 @@ RocketBoots.loadComponents([
 			{"state": "StateMachine"},
 			{"loop": "Loop"},
 			{"incrementer": "Incrementer"},
-			{"dice": "Dice"}
+			{"dice": "Dice"},
+			{"sounds": "SoundBank"}
 		]
 	});
-	g.version = "v1.1.0";
+	g.version = "v1.1.1";
 	g.cc = new CCGameClass();
 
 	g.state.addStates({
+		"preload": {
+			start: function(){
+				g.sounds.loadSounds(["coin1","coin2","dud1","dud2","save1","transfer1","upgrade1","shock1"]);
+				// Automatically move on...
+				if (g.cc.loadGame()) {
+					g.state.transition("game");
+				} else {
+					g.state.transition("intro");
+				}
+			}
+		},
 		"intro": {
 			start: function(){
 				$('.intro .goto').fadeIn(200);
@@ -77,6 +90,7 @@ RocketBoots.loadComponents([
 				
 			},
 			end: function(){
+				g.cc.saveGame();
 				g.loop.stop();
 			}
 		},
@@ -396,20 +410,20 @@ RocketBoots.loadComponents([
 		//=============================================== Numbers
 		
 		this.industryClick = function (evt) {
-			this.playSound("coin1");
+			g.sounds.play("coin1");
 			this.total.indMoney += this.perClick.indMoney;
 			this.animateClickEarning(this.perClick.indMoney, evt);
 		}
 
 		this.politicsClick = function (evt) {
-			this.playSound("coin2");
+			g.sounds.play("coin2");
 			this.total.polMoney += this.perClick.polMoney;
 			//this.total.votes += this.perClick.votes;
 			this.animateClickEarning(this.perClick.polMoney, evt);
 		}
 
 		this.mediaClick = function (evt) {
-			this.playSound("coin1");
+			g.sounds.play("coin1");
 			this.total.medMoney += this.perClick.medMoney;
 			//this.total.minds += this.perClick.votes;
 			this.animateClickEarning(this.perClick.medMoney, evt);
@@ -567,10 +581,10 @@ RocketBoots.loadComponents([
 				
 				if (typeof doWriteUpgrades !== 'boolean') doWriteUpgrades = true;
 				if (doWriteUpgrades) this.writeUpgrades();
-				this.playSound("upgrade1");
+				g.sounds.play("upgrade1");
 				return true;
 			} else {
-				this.playSound("dud");
+				g.sounds.play("dud");
 				//this.notify("Cannot afford this upgrade.");
 				return false;
 			}
@@ -706,11 +720,11 @@ RocketBoots.loadComponents([
 			$medClicker.click(function(e){	o.mediaClick(e); });
 			
 			$('.save').click(function(e){
-				o.playSound("save1");
+				g.sounds.play("save1");
 				o.saveGame(true);
 			});
 			$('.load').click(function(e){
-				o.playSound("save1");
+				g.sounds.play("save1");
 				if (o.loadGame()) {
 					g.state.transition("game");
 				} else {
@@ -718,13 +732,14 @@ RocketBoots.loadComponents([
 				}
 			});
 			$('.delete').click(function(e){
-				o.playSound("shock1");
+				g.sounds.play("shock1");
 				o.deleteGame(true);
 				//g.state.transition("intro");
 			});
 			$('.toggleSound').click(function(e){
-				var x = o.toggleSound();
-				o.notify("Sound turned " + ((x) ? "ON" : "OFF"));
+				var isOn = g.sounds.toggle();
+				o.notify("Sound turned " + ((isOn) ? "ON" : "OFF"));
+				o.saveGame();
 			});
 			$('.toggleAutoSave').click(function(e){
 				o.isAutoSaveOn = !o.isAutoSaveOn;
@@ -740,7 +755,7 @@ RocketBoots.loadComponents([
 					o.flow.from = "";
 					o.flow.to = "";
 				} else {
-					o.playSound("transfer1");
+					g.sounds.play("transfer1");
 					$arrows.removeClass("active");
 					$thisArrow.addClass("active");
 					o.flow.from = $thisArrow.data("flowfrom");
@@ -808,11 +823,7 @@ RocketBoots.loadComponents([
 			iteration++;
 			if (Object.keys(o.data.upgrades).length > 0) {
 				console.log("Launching Game!");
-				if (o.loadGame()) {
-					g.state.transition("game");
-				} else {
-					g.state.transition("intro");
-				}
+				g.state.transition("preload");
 			} else if (iteration < 40) {
 				console.log("Launch... Cannot start yet. " + iteration);
 				var launchTimer = window.setTimeout(function(){
@@ -835,13 +846,14 @@ RocketBoots.loadComponents([
 		this.saveGame = function(showNotice) {
 			localStorage.setItem("owned", JSON.stringify(this.owned));
 			localStorage.setItem("total", JSON.stringify(this.total));
-			localStorage.setItem("isSoundOn", JSON.stringify(this.isSoundOn));
+			localStorage.setItem("isSoundOn", JSON.stringify(g.sounds.isSoundOn));
 			
 			this.lastSaveDateTime = new Date();
 			
 			if (typeof showNotice === 'boolean') { 
 				if (showNotice) this.notify("Game has been saved to this browser. Your game will be automatically loaded when you return.");
 			}
+			console.log("Game saved.");
 		}
 		
 		this.deleteGame = function() {
@@ -869,52 +881,11 @@ RocketBoots.loadComponents([
 			}
 			var loadedSound = localStorage.getItem("isSoundOn");
 			if (loadedSound !== null) {
-				o.isSoundOn = JSON.parse(loadedSound);
+				g.sounds.toggle( (JSON.parse(loadedSound) ? true : false) );
 			}
 			return isLoaded;
 		}
-
 		
-		//========================================= SOUND
-
-		this.isSoundOn = false;
-		
-		this.toggleSound = function (forceSound) {
-			if (typeof forceSound === 'boolean') 	this.isSoundOn = forceSound;
-			else									this.isSoundOn = (this.isSoundOn) ? false : true;
-			return this.isSoundOn;	
-		}
-
-		this.sounds = {
-			"coin1" 		: new Audio("sounds/coin1.mp3")
-			,"coin2" 		: new Audio("sounds/coin2.mp3")
-			,"dud1" 		: new Audio("sounds/dud1.mp3")
-			,"dud2" 		: new Audio("sounds/dud2.mp3")
-			,"save1" 		: new Audio("sounds/save1.mp3")
-			,"transfer1" 	: new Audio("sounds/transfer1.mp3")
-			,"upgrade1" 	: new Audio("sounds/upgrade1.mp3")
-			,"shock1" 	: new Audio("sounds/shock1.mp3")
-		}	
-		
-		this.playSound = function (soundName, isLooped) {
-			if (this.isSoundOn) {	
-				if (soundName == "coin" || soundName == "dud") {
-					soundName += g.dice.roll1d(2);
-				}	
-				if (typeof this.sounds[soundName] === 'undefined') {
-					console.log("Sound does not exist: " + soundName);
-					return false;
-				} else {
-					if (typeof isLooped === 'boolean') {
-						this.sounds[soundName].loop = isLooped;
-					}
-					this.sounds[soundName].play();
-					return true;
-				}
-			} else {
-				return false;
-			}
-		}
 		
 		//========================================= Helpers
 		

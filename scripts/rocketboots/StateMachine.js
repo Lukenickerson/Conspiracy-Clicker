@@ -109,7 +109,6 @@
 			var $clicked = $(this);
 			var nextStateName = sm._getStateFromElement(this);
 			var lastStateName = $clicked.data("last-state");
-			console.log(lastStateName, sm.currentState.name, nextStateName);
 			if (nextStateName === sm.currentState.name) {
 				// TODO: Use `back` function?
 				sm.transition(lastStateName);
