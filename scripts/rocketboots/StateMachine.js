@@ -11,6 +11,9 @@
 		this.states = {};
 		this.currentState = null;
 		this.history = [];
+		this._mainElementSelector = 'body';
+		this._mainElementClassPrefix = 'state-';
+		this._mainElementClassSuffix = '';
 		this._pruneHistoryAt = 200;
 		this._pruneHistoryTo = 100;
 		// Alias
@@ -51,8 +54,9 @@
 		return sm;
 	};
 	StateMachine.prototype.transition = function(newState, recordHistory){
+		var oldStateName = this.currentState.name;
 		recordHistory = (typeof recordHistory === 'boolean') ? recordHistory : true;
-		console.log("State Machine: Transition from " + this.currentState.name + " to " + newState, (recordHistory ? "": "(no history)"));
+		console.log("State Machine: Transition from " + oldStateName + " to " + newState, (recordHistory ? "": "(no history)"));
 		this.currentState.end();
 		this.currentState = this.get(newState);
 		if (recordHistory) {
@@ -61,6 +65,9 @@
 				this.history.splice(0, (this._pruneHistoryAt - this._pruneHistoryTo));
 			}
 		}
+		$(this._mainElementSelector)
+			.removeClass(this._mainElementClassPrefix + oldStateName + this._mainElementClassSuffix)
+			.addClass(this._mainElementClassPrefix + newState + this._mainElementClassSuffix);
 		this.currentState.start();
 		return this;
 	};
