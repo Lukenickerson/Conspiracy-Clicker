@@ -128,7 +128,7 @@ nav {
 	border-radius: 44px;
 	text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
 }
-	.side-nav-menu.toggled-state-on {
+	.state-menu .side-nav-menu {
 		background-image: url('../images/eye2_32x32.png');
 	}
 
@@ -203,8 +203,8 @@ section.progress {
 		font-family: 'Permanent Marker', cursive;
 		position: absolute;
 		display: none;
-		height: 2em;
-		line-height: 2em;
+		height: 1.6em;
+		line-height: 1.6em;
 		top: 0;
 		width: 100%;
 		text-align: center;
@@ -213,8 +213,8 @@ section.progress {
 		display: block;
 	}
 	.progressBar {
-		height: 2em;
-		background: rgba(0,0,0,0.2);
+		height: 1.6em;
+		background: rgba(0,0,0,0.1);
 	}
 	.progressBar > div {
 		margin: 0 auto;
@@ -240,7 +240,7 @@ section.progress {
 	.threeCols > section h2 {
 		font-family: 'Permanent Marker', cursive;
 		text-align: center;
-		margin: 0;
+		margin: 0.5em 0 0 0;
 		padding: 0;
 		color: rgba(255,255,255,0.9);
 		letter-spacing: 0.125em;

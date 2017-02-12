@@ -34,36 +34,46 @@ RocketBoots.loadComponents([
 
 	g.state.addStates({
 		"intro": {
-
+			start: function(){
+				$('.intro .goto').fadeIn(200);
+			}, end: function(){
+				$('.intro .goto').fadeOut(200);
+			}
 		},
 		"walkthru": {
 			start: function(){
-				$('.intro .goto').fadeOut(200);
 				$('section.intro').fadeOut(1000, function(){
-					$('section.walkthru').fadeIn(1000, function(){
-						$('.threeCols').fadeIn(1000);
-					});
+					$('section.walkthru').fadeIn(1000);
+					$('.threeCols').fadeIn(1000);
+					$('.metrics').hide();
+					$('.progress').hide();
 				});
+				$('.walkthru .goto').fadeIn(200);
 			},
-			end: function(){
+			end: function(){				
 				$('.walkthru .goto').fadeOut(200);
-				$('section.walkthru').fadeOut(1000,function(){
-					g.cc.saveGame();
-					g.cc.loadGame(true);
-				});				
+				$('section.walkthru').fadeOut(1000);				
 			}
 		},
 		"game": {
 			viewName: "game",
 			start: function(){
+				// Load saved game; if none exists then create a baseline save; if all fails, bail out back to intro
+				if (!g.cc.loadGame()) {
+					g.cc.saveGame();
+					if (!g.cc.loadGame()) {
+						g.state.transition("intro");
+					}
+				}
 				g.cc.calculateCoreValues();
 				g.cc.writeUpgrades();
 				//o.addFlipCardEvents();
-				$('.metrics').slideDown(1000);
-				$('.progress').show(2000);
-				$('.threeCols').fadeIn(2000, function(){
+				$('.upgradeList').hide().fadeIn(1000);
+				$('.metrics').fadeIn(500);
+				$('.progress').slideDown(200);
+				//$('.threeCols').fadeIn(800, function(){
 					g.loop.start();
-				});
+				//});
 				
 			},
 			end: function(){
@@ -701,14 +711,16 @@ RocketBoots.loadComponents([
 			});
 			$('.load').click(function(e){
 				o.playSound("save1");
-				o.loadGame();
+				if (o.loadGame()) {
+					g.state.transition("game");
+				} else {
+					g.state.transition("intro");
+				}
 			});
 			$('.delete').click(function(e){
 				o.playSound("shock1");
 				o.deleteGame(true);
-				if (confirm("Reload page to start a new game?")) {
-					window.location.reload(true); 
-				}
+				//g.state.transition("intro");
 			});
 			$('.toggleSound').click(function(e){
 				var x = o.toggleSound();
@@ -796,7 +808,11 @@ RocketBoots.loadComponents([
 			iteration++;
 			if (Object.keys(o.data.upgrades).length > 0) {
 				console.log("Launching Game!");
-				o.loadGame();
+				if (o.loadGame()) {
+					g.state.transition("game");
+				} else {
+					g.state.transition("intro");
+				}
 			} else if (iteration < 40) {
 				console.log("Launch... Cannot start yet. " + iteration);
 				var launchTimer = window.setTimeout(function(){
@@ -832,6 +848,8 @@ RocketBoots.loadComponents([
 			localStorage.removeItem("owned");
 			localStorage.removeItem("total");
 			this.notify("Saved game deleted!");
+			// TODO: Make a way to delete/restart without reloading the page
+			window.location.reload(true); 
 		}	
 		
 		this.loadGame = function () {
@@ -852,14 +870,8 @@ RocketBoots.loadComponents([
 			var loadedSound = localStorage.getItem("isSoundOn");
 			if (loadedSound !== null) {
 				o.isSoundOn = JSON.parse(loadedSound);
-			}		
-
-			//$('body > header').fadeIn(200);
-			if (!isLoaded) {
-				$('.intro').fadeIn(1000);
-			} else {
-				g.state.transition("game");
 			}
+			return isLoaded;
 		}
 
 		
