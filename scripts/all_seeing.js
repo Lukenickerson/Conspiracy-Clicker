@@ -29,7 +29,7 @@ RocketBoots.loadComponents([
 			{"dice": "Dice"}
 		]
 	});
-	g.version = "beta-1.1.0";
+	g.version = "v1.1.0";
 	g.cc = new CCGameClass();
 
 	g.state.addStates({
