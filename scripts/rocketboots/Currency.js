@@ -17,13 +17,19 @@
 		//this.showMax	= (typeof options.showMax === "boolean") ? options.showMax : false;
 		this.rate 		= getDefaultNumber(options.rate, 0); // Increase per step
 		this.min 		= getDefaultNumber(options.min, 0);
-		this.max 		= getDefaultNumber(options.max, 1000000000); // 1B default
+		this.max 		= getDefaultNumber(options.max, 1000000000000000); // 1 quadrillion default (max safe value is 9,007,199,254,740,991)
 		this.val 		= getDefaultNumber(options.val, this.min);
 		this.floor 		= Math.floor(this.val);
 		this.stepsPerSecond = getDefaultNumber(options.stepsPerSecond, 1);
 		this.lastUpdated = new Date();
 		this.mathMethodForDisplay	= (options.mathMethodForDisplay || "floor");
 		this.tip 		= (typeof options.tip === "string") ? options.tip : "";
+
+		// TODO: check that the value will never go over this... if so, go back
+		// to zero and keep track of the number of overflows so we can handle 
+		// very large numbers
+		this._maxSafe 	= Number.MAX_SAFE_INTEGER;
+		this.overflowCount = 0;
 
 		//this.hasCalculations = (options.calcRate || options.calcValue || options.calcMax) ? true : false;
 		this.calcRate 	= (options.calcRate || undefined);
