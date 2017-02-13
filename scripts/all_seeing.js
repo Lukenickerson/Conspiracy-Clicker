@@ -33,7 +33,8 @@ RocketBoots.loadComponents([
 			{"notifier": "Notifier"}
 		]
 	});
-	g.version = "v1.1.1x";
+	var curr = g.currencies = g.incrementer.currencies;
+	g.version = "v1.2-beta1";
 	g.cc = new CCGameClass();
 
 	g.state.addStates({
@@ -123,23 +124,86 @@ RocketBoots.loadComponents([
 	});
 
 	g.loop.set(function(iteration){
-		// TODO: Use incrementer
-		//g.incrementer.incrementByElapsedTime(undefined, true);
-		//g.incrementer.calculate();
-		g.cc.incrementTotals(iteration);
+		g.incrementer.incrementByElapsedTime(undefined, true);
+		g.incrementer.calculate();
 	}, LOOP_DELAY).addActionPerSecond(function(){
 		g.cc.calculateCoreValues();
-		g.cc.displayPerSecondNumbers();
-		g.cc.displayPerClickNumbers();
-	}, 0.6).addActionPerSecond(function(){
 		g.cc.displayProgress();
 		g.cc.updateUpgradeAfford();
-		g.displayLastSaveTime();
-	}, 1).addActionPerSecond(function(){
+	}, 0.5).addActionPerSecond(function(){
 		g.cc.autoSaveGame();
-	}, 2);
+		g.displayLastSaveTime();
+	}, 1);
 
 	g.cc.setup(); // TODO: move this to state machine
+
+
+	//===== Currencies
+
+	g.incrementer.addCurrencies([
+		// TOTALS
+		{
+			name: "indMoney",
+			displayName: "Industry Money",
+			selectors: {
+				val: [".industry .money .val"],
+				rate: [".industry .profitPerSecond .val"]
+			}
+		},{
+			name: "polMoney",
+			displayName: "Politics Money",
+			selectors: {
+				val: [".politics .money .val"],
+				rate: [".politics .profitPerSecond .val"]
+			}
+		},{
+			name: "medMoney",
+			displayName: "Media Money",
+			selectors: {
+				val: [".media .money .val"],
+				rate: [".media .profitPerSecond .val"]
+			}
+		},{
+			name: "votes",
+			displayName: "Votes",
+			selectors: {
+				val: [".politics .votes .val"],
+				rate: [".politics .votesPerSecond .val"]
+			}
+		},{
+			name: "minds",
+			displayName: "Minds Controlled",
+			selectors: {
+				val: [".media .minds .val"],
+				rate: [".media .mindsPerSecond .val"]
+			}
+		},
+		// PER CLICKS
+		{
+			name: "indMoneyPerClick",
+			selectors: ".industry .profitPerClick .val",
+			calcVal: function(c){
+				var upgradeCounts = g.cc.getUpgradeCounts();
+				return (1.0 + (upgradeCounts.industry / 5));
+			}
+		},{
+			name: "polMoneyPerClick",
+			selectors: ".politics .profitPerClick .val",
+			calcVal: function(c){
+				var upgradeCounts = g.cc.getUpgradeCounts();
+				return (1.0 + (upgradeCounts.politics / 5));
+			}
+		},{
+			name: "medMoneyPerClick",
+			selectors: ".media .profitPerClick .val",
+			calcVal: function(c){
+				var upgradeCounts = g.cc.getUpgradeCounts();
+				return (1.0 + (upgradeCounts.media / 5));
+			}
+		}
+	]);
+
+	g.mainCurrencyNames = ["indMoney", "polMoney", "medMoney", "votes", "minds"];
 
 
 	//===== Timing functions
@@ -179,7 +243,6 @@ RocketBoots.loadComponents([
 		
 		// Constants, Lookups
 		this.sectorArray = ["industry", "politics", "media"];
-		this.valueTypes = ["indMoney", "polMoney", "medMoney", "votes", "minds"];
 		this.shortDisplayValueTypes = {
 			"indMoney" 		: "$"
 			,"polMoney" 	: "$"
@@ -195,45 +258,12 @@ RocketBoots.loadComponents([
 			,"minds"		: "minds"
 		};
 		// Game Data
-		this.total = {
-			indMoney	: 0
-			,polMoney	: 0
-			,medMoney	: 0
-			,votes		: 0
-			,minds		: 0
-		};
-		this.perSecond = {
-			//indMoney	: 0
-			//,polMoney	: 0
-			//,medMoney	: 0
-			//,votes		: 0
-			//,minds		: 0
-		};
-		this.perClick = {
-			//indMoney	: 1
-			//,polMoney	: 1
-			//,medMoney	: 1
-			//,votes		: 0
-			//,minds		: 0	
-		};
 		this.flow = {
 			"from" 			: ""
 			,"to"			: ""
 			,"baseSpeed"	: 1
 			,"percentSpeed"	: 0.005
 			,"efficiency"	: 0.75
-		};
-
-		
-
-		//=============================================== MAIN LOOP
-		
-		this.incrementTotals = function(iteration) {
-			var o = this;
-			o.loopOverCurrencies(function(curr){
-				o.incrementCurrency(curr, SECONDS_PER_LOOP);
-			});
-			o.displayTotals();
 		};
 
 		
@@ -248,12 +278,12 @@ RocketBoots.loadComponents([
 				combinedPercent = 0;
 			var upgradeCounts = this.getUpgradeCounts();
 
-			if (this.total.votes > this.total.minds) {
-				highVal = this.total.votes;
-				lowVal = this.total.minds;
+			if (curr.votes.val > curr.minds.val) {
+				highVal = curr.votes.val;
+				lowVal = curr.minds.val;
 			} else {
-				highVal = this.total.minds;
-				lowVal = this.total.votes;		
+				highVal = curr.minds.val;
+				lowVal = curr.votes.val;		
 			}
 			totalControlled = highVal + (lowVal/2);
 			if (totalControlled > this.totalPopulation) {
@@ -285,31 +315,6 @@ RocketBoots.loadComponents([
 				this.winShown = true;
 			}
 		}
-		
-		this.displayTotals = function () {
-			this.displayNumber(this.total.indMoney, this.$indMoneyVal);
-			this.displayNumber(this.total.polMoney, this.$polMoneyVal);
-			this.displayNumber(this.total.medMoney, this.$medMoneyVal);
-			this.displayNumber(this.total.votes, this.$votesVal);
-			this.displayNumber(this.total.minds, this.$mindsVal);
-		};
-
-		this.displayPerSecondNumbers = function () {
-			// Per second...
-			this.displayNumber(this.perSecond.indMoney, this.$indMoneyPerSecondVal);
-			this.displayNumber(this.perSecond.polMoney, this.$polMoneyPerSecondVal);
-			this.displayNumber(this.perSecond.medMoney, this.$medMoneyPerSecondVal);
-			this.displayNumber(this.perSecond.votes, this.$votesPerSecondVal);
-			this.displayNumber(this.perSecond.minds, this.$mindsPerSecondVal);	
-		};
-
-		this.displayPerClickNumbers = function () {
-			this.displayNumber(this.perClick.indMoney, this.$indMoneyPerClickVal);
-			this.displayNumber(this.perClick.polMoney, this.$polMoneyPerClickVal);
-			this.displayNumber(this.perClick.medMoney, this.$medMoneyPerClickVal);
-			this.displayNumber(this.perClick.votes, this.$votesPerClickVal);
-			this.displayNumber(this.perClick.minds, this.$mindsPerClickVal);
-		};
 		
 		this.displayNumber = function (n, $elt) {
 			//console.log($elt);
@@ -372,11 +377,11 @@ RocketBoots.loadComponents([
 					
 					+ '<button type="button" class="buy"><div class="buyText">Buy</div>'
 				;
-				for (var valueType in upgrade.baseCost) {
-					var finalCost = this.calcCost(upgrade, upgradeCount, valueType);
+				for (var currName in upgrade.baseCost) {
+					var finalCost = this.calcCost(upgrade, upgradeCount, currName);
 					h += '<div class="cost val">'
 						+ this.getDisplayNumber(finalCost, true)
-						+ ' ' + this.shortDisplayValueTypes[valueType]
+						+ ' ' + this.shortDisplayValueTypes[currName]
 						+ '</div>'
 					;
 				}
@@ -392,11 +397,11 @@ RocketBoots.loadComponents([
 				}
 				if (typeof upgrade.perSecond === 'object') {
 					h += '<ul class="">';
-					for (var valueType in upgrade.perSecond) {
+					for (var currName in upgrade.perSecond) {
 						h += '<li>' 
-							+ ((upgrade.perSecond[valueType] > 0) ? "+" : "")
-							+ this.getDisplayNumber(upgrade.perSecond[valueType])
-							+ ' ' + this.displayValueTypes[valueType]
+							+ ((upgrade.perSecond[currName] > 0) ? "+" : "")
+							+ this.getDisplayNumber(upgrade.perSecond[currName])
+							+ ' ' + this.displayValueTypes[currName]
 							+ '/sec'
 							+ '</li>'
 						;
@@ -442,22 +447,20 @@ RocketBoots.loadComponents([
 		
 		this.industryClick = function (evt) {
 			g.sounds.play("coin1");
-			this.total.indMoney += this.perClick.indMoney;
-			this.animateClickEarning(this.perClick.indMoney, evt);
+			curr.indMoney.add(curr.indMoneyPerClick.val);
+			this.animateClickEarning(curr.indMoneyPerClick.val, evt);
 		}
 
 		this.politicsClick = function (evt) {
 			g.sounds.play("coin2");
-			this.total.polMoney += this.perClick.polMoney;
-			//this.total.votes += this.perClick.votes;
-			this.animateClickEarning(this.perClick.polMoney, evt);
+			curr.polMoney.add(curr.polMoneyPerClick.val);
+			this.animateClickEarning(curr.polMoneyPerClick.val, evt);
 		}
 
 		this.mediaClick = function (evt) {
 			g.sounds.play("coin1");
-			this.total.medMoney += this.perClick.medMoney;
-			//this.total.minds += this.perClick.votes;
-			this.animateClickEarning(this.perClick.medMoney, evt);
+			curr.medMoney.add(curr.medMoneyPerClick.val);
+			this.animateClickEarning(curr.medMoneyPerClick.val, evt);
 		}
 
 		this.animateClickEarning = function (amount, evt) {
@@ -506,20 +509,11 @@ RocketBoots.loadComponents([
 		
 		this.setDefaults = function () {
 			var upgradeCounts = this.getUpgradeCounts();
-			this.perSecond = {
-				indMoney	: 0
-				,polMoney	: 0
-				,medMoney	: 0
-				,votes		: 0
-				,minds		: 0
-			};
-			this.perClick = {
-				indMoney	: (1.0 + (upgradeCounts.industry / 5))
-				,polMoney	: (1.0 + (upgradeCounts.politics / 5))
-				,medMoney	: (1.0 + (upgradeCounts.media / 5))
-				,votes		: (0.0)
-				,minds		: (0.0)
-			};
+			curr.indMoney.setRate(0);
+			curr.polMoney.setRate(0);
+			curr.medMoney.setRate(0);
+			curr.votes.setRate(0);
+			curr.minds.setRate(0);
 			this.flow.baseSpeed = 1.0 + (upgradeCounts.total / 20);
 			return true;
 		}
@@ -528,21 +522,14 @@ RocketBoots.loadComponents([
 			return (this.flow.from.length > 0 && this.flow.to.length > 0);
 		}
 
-		this.incrementCurrency = function (currencyKey, multiplier) {
-			this.total[currencyKey] += (this.perSecond[currencyKey] * multiplier);
-			if (this.total[currencyKey] < 0) {
-				this.total[currencyKey] = 0;
-			}
-		}
-
 		this.calculateFlowValues = function () {
 			var flowSpeed;
 			if (this.isFlowing()) {
-				flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * this.total[this.flow.from]);
+				flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * curr[this.flow.from].val);
 				// Make sure the amount flowing from can support it
-				if (this.total[this.flow.from] >= flowSpeed) {
-					this.perSecond[this.flow.from] -= flowSpeed;
-					this.perSecond[this.flow.to] += (flowSpeed * this.flow.efficiency);
+				if (curr[this.flow.from].val >= flowSpeed) {
+					curr[this.flow.from].rate -= flowSpeed;
+					curr[this.flow.to].rate += (flowSpeed * this.flow.efficiency);
 				}
 			}
 		}
@@ -560,19 +547,19 @@ RocketBoots.loadComponents([
 						var upgrade = o.data.upgrades[sector][ug];
 						if (typeof upgrade.perSecond === 'object') {
 							// Loop through all types and see if the upgrade has values
-							for (var vti in o.valueTypes) {
-								var valueType = o.valueTypes[vti];
-								if (typeof upgrade.perSecond[valueType] === 'number') {
-									o.perSecond[valueType] += (upgradeQuantity * upgrade.perSecond[valueType]);
+							for (var ci in g.mainCurrencyNames) {
+								var currName = g.mainCurrencyNames[ci];
+								if (typeof upgrade.perSecond[currName] === 'number') {
+									curr[currName].rate += (upgradeQuantity * upgrade.perSecond[currName]);
 								}						
 							}
 						}
 						if (typeof upgrade.perClick === 'object') {
 							// Loop through all types and see if the upgrade has values
-							for (var vti in o.valueTypes) {
-								var valueType = o.valueTypes[vti];
-								if (typeof upgrade.perClick[valueType] === 'number') {
-									o.perSecond[valueType] += (upgradeQuantity * upgrade.perClick[valueType]);
+							for (var ci in g.mainCurrencyNames) {
+								var currName = g.mainCurrencyNames[ci];
+								if (typeof upgrade.perClick[currName] === 'number') {
+									curr[currName].rate += (upgradeQuantity * upgrade.perClick[currName]);
 								}							
 							}					
 						}
@@ -590,10 +577,9 @@ RocketBoots.loadComponents([
 		}
 
 		this.loopOverCurrencies = function (callback) {
-			var currencies = ["indMoney", "polMoney", "votes", "medMoney", "minds"];
-			var numOfCurrencies = currencies.length;
+			var numOfCurrencies = g.mainCurrencyNames.length;
 			for (var i = 0; i < numOfCurrencies; i++) {
-				callback(currencies[i]);
+				callback(g.mainCurrencyNames[i]);
 			}		
 		}
 		
@@ -604,8 +590,8 @@ RocketBoots.loadComponents([
 				// The amount before the purchase
 				var upgradeQuantity = this.owned.upgrades[sector][upgradeIndex];
 				// Remove the cost from the totals...
-				for (var valueType in upgrade.baseCost) {
-					this.total[valueType] -= this.calcCost(upgrade, upgradeQuantity, valueType);
+				for (var currName in upgrade.baseCost) {
+					curr[currName].subtract(this.calcCost(upgrade, upgradeQuantity, currName));
 				}			
 				// Add the upgrade to owned things
 				this.owned.upgrades[sector][upgradeIndex] += 1;
@@ -620,8 +606,8 @@ RocketBoots.loadComponents([
 			}
 		}
 		
-		this.calcCost = function (upgrade, upgradeQuantity, valueType) {
-			var finalCost = upgrade.baseCost[valueType];
+		this.calcCost = function (upgrade, upgradeQuantity, currencyName) {
+			var finalCost = upgrade.baseCost[currencyName];
 			finalCost = (finalCost * Math.pow(upgrade.costMultiplier, upgradeQuantity));
 			return finalCost;
 		}
@@ -633,11 +619,11 @@ RocketBoots.loadComponents([
 			if (typeof upgrade.baseCost === 'object' &&
 				typeof upgrade.costMultiplier === 'number') 
 			{
-				for (var vti in this.valueTypes) {
-					var valueType = this.valueTypes[vti];
-					if (typeof upgrade.baseCost[valueType] === 'number') {
-						var finalCost = this.calcCost(upgrade, upgradeQuantity, valueType);
-						if (this.total[valueType] < finalCost) {
+				for (var ci in g.mainCurrencyNames) {
+					var currName = g.mainCurrencyNames[ci];
+					if (typeof upgrade.baseCost[currName] === 'number') {
+						var finalCost = this.calcCost(upgrade, upgradeQuantity, currName);
+						if (curr[currName].val < finalCost) {
 							return false;
 						}
 					}
@@ -715,24 +701,7 @@ RocketBoots.loadComponents([
 			
 			var $indClicker = $('.industry .clicker');
 			var $polClicker = $('.politics .clicker');
-			var $medClicker = $('.media .clicker');
-			o.$indMoneyVal 			= $('.industry .money .val');
-			o.$indMoneyPerClickVal 	= $('.industry .profitPerClick .val');
-			o.$indMoneyPerSecondVal	= $('.industry .profitPerSecond .val');
-			
-			o.$polMoneyVal 			= $('.politics .money .val');
-			o.$polMoneyPerClickVal	= $('.politics .profitPerClick .val');
-			o.$polMoneyPerSecondVal = $('.politics .profitPerSecond .val');
-			o.$votesVal				= $('.politics .votes .val');
-			o.$votesPerClickVal 	= $('.politics .votesPerClick .val');
-			o.$votesPerSecondVal 	= $('.politics .votesPerSecond .val');
-			
-			o.$medMoneyVal 				= $('.media .money .val');
-			o.$medMoneyPerClickVal 		= $('.media .profitPerClick .val');
-			o.$medMoneyPerSecondVal 	= $('.media .profitPerSecond .val');
-			o.$mindsVal 				= $('.media .minds .val');
-			o.$mindsPerClickVal 		= $('.media .mindsPerClick .val');
-			o.$mindsPerSecondVal 		= $('.media .mindsPerSecond .val');		
+			var $medClicker = $('.media .clicker');	
 			
 			o.$progressVal = $('.progress .progressVal');
 			o.$progressBar = $('.progress .progressBar');
@@ -873,7 +842,13 @@ RocketBoots.loadComponents([
 
 		this.saveGame = function(showNotice) {
 			localStorage.setItem("owned", JSON.stringify(this.owned));
-			localStorage.setItem("total", JSON.stringify(this.total));
+			localStorage.setItem("currencies", JSON.stringify({
+				indMoney: curr.indMoney.val,
+				polMoney: curr.polMoney.val,
+				medMoney: curr.medMoney.val,
+				votes: curr.votes.val,
+				minds: curr.minds.val,
+			}));
 			localStorage.setItem("isSoundOn", JSON.stringify(g.sounds.isSoundOn));
 			localStorage.setItem("version", g.version);
 
@@ -884,7 +859,7 @@ RocketBoots.loadComponents([
 		
 		this.deleteGame = function() {
 			localStorage.removeItem("owned");
-			localStorage.removeItem("total");
+			localStorage.removeItem("currencies");
 			localStorage.removeItem("version");
 			g.notifier.warn("Saved game deleted!");
 			// TODO: Make a way to delete/restart without reloading the page
@@ -895,15 +870,18 @@ RocketBoots.loadComponents([
 			var o = this;
 			var isLoaded = false;
 			// Load game data (two objects)
-			console.log("checking localStorage", localStorage.getItem("owned"), localStorage.getItem("total"));
+			console.log("checking localStorage", localStorage.getItem("owned"), localStorage.getItem("currencies"));
 			var loadedOwned = localStorage.getItem("owned");
 			if (loadedOwned !== null) {
 				o.owned = JSON.parse(loadedOwned);
 				isLoaded = true;
 			}
-			var loadedTotal = localStorage.getItem("total");
-			if (loadedTotal !== null) {
-				o.total = JSON.parse(loadedTotal);
+			var loadedCurrencies = localStorage.getItem("currencies");
+			if (loadedCurrencies !== null) {
+				loadedCurrencies = JSON.parse(loadedCurrencies);
+				o.loopOverCurrencies(function(currName){
+					curr[currName].setVal(loadedCurrencies[currName]);
+				});
 				isLoaded = true;
 			}
 			var loadedSound = localStorage.getItem("isSoundOn");

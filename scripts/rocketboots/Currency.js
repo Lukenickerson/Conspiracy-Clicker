@@ -38,6 +38,9 @@
 		} else {
 			this.element = RocketBoots.document.getElementById(this.name);
 		}
+
+		this.selectors = options.selectors; // this is also set by setElements
+		this.elements = this.setElements(options.selectors);
 		
 		if (typeof options.callback == "function") {
 			this.increment = function (steps){
@@ -64,10 +67,56 @@
 
 	};
 
+	Currency.prototype.setElements = function(selectors){
+		var i, t;
+		var elts;
+		var typesOfValues = ["val", "rate", "min", "max"];
+		var typeOfValue;
+
+		if (typeof selectors === "string") {
+			selectors = { val: [selectors] };
+		} else if (selectors instanceof Array) {
+			selectors = { val: selectors };
+		} else if (typeof selectors === "object") {
+			// all good, hopefully
+		} else {
+			console.warn("Bad selectors", selectors);
+			return false;
+		}
+		if (!(selectors.val instanceof Array)) { selectors.val = []; }
+		if (!(selectors.rate instanceof Array)) { selectors.rate = []; }
+		if (!(selectors.min instanceof Array)) { selectors.min = []; }
+		if (!(selectors.max instanceof Array)) { selectors.max = []; }
+
+		this.selectors = selectors;
+		
+		// Clear elements first, then loop over all selectors
+		this.elements = {
+			val: [],
+			rate: [],
+			min: [],
+			max: []
+		};
+		for (var t = 0; t < 4; t++) {
+			typeOfValue = typesOfValues[t];
+			i = selectors[typeOfValue].length;
+			while (i--) {
+				elts = document.querySelectorAll(selectors[typeOfValue][i]); // gives nodelist
+				elts = Array.prototype.slice.call(elts); // converts to array
+				if (elts.length) {
+					this.elements[typeOfValue] = this.elements[typeOfValue].concat(elts);
+				} else {
+					console.warn("Element not found with selector:", selectors[typeOfValue][i]);
+				}
+			}			
+		}
+		return this.elements;
+	}
+
 	Currency.prototype.getPercent = function(){
 		if (this.max == 0) { return 0; }
 		return this.val / this.max;
-	}
+	};
 	
 	Currency.prototype.add = function(amount){
 		if (typeof amount === "number") {
@@ -79,11 +128,36 @@
 	Currency.prototype.subtract = function(amount) {
 		this.add( -1 * amount );
 	};
-	Currency.prototype.zero = function () {
-		this.val = 0;
+
+	Currency.prototype.zero = function (valueType) {
+		if (typeof valueType !== "string") { valueType = "val"; }
+		this[valueType] = 0;
 		this.correctBounds();
 		return this;
 	};
+	Currency.prototype.set = function (n) {
+		return this.setVal(n);
+	};
+	Currency.prototype.setVal = function (n) {
+		this.val = n;
+		this.correctBounds();
+		return this;
+	};
+	Currency.prototype.setRate = function (n) {
+		this.rate = n;
+		return this;
+	};
+	Currency.prototype.setMin = function (n) {
+		this.min = n;
+		this.correctBounds();
+		return this;
+	};
+	Currency.prototype.setMax = function (n) {
+		this.max = n;
+		this.correctBounds();
+		return this;
+	};
+
 	Currency.prototype.correctBounds = function(){
 		if (this.val > this.max) {
 			this.val = this.max;
@@ -142,25 +216,40 @@
 		return _getDisplayValue(n, mathMethod, div).toLocaleString();
 	}
 
+	// Get strings for writing
+	Currency.prototype.getRateString = function (includePlus) {
+		if (typeof includePlus === 'undefined') { includePlus = true; }
+		var realRatePerSecond = this.rate * this.stepsPerSecond;
+		var ratePerSecond = _getDisplayValueString(realRatePerSecond, this.mathMethodForDisplay);
+		var plus = (realRatePerSecond > 0 && includePlus) ? "+" : "";
+		return (plus + ratePerSecond.toLocaleString());
+	};
+
 
 	// FIXME: Move this to somewhere else?
 	Currency.prototype.draw = function () {
+		this.drawValue("val");
+		this.drawValue("rate");
+		this.drawValue("min");
+		this.drawValue("max");
+		return this._draw();
+	};
+	Currency.prototype._draw = function () {
 		if (typeof this.element === 'undefined' || this.element === null) {
 			return false;
 		}
 		var realRatePerSecond = this.rate * this.stepsPerSecond;
-		var ratePerSecond = _getDisplayValueString(realRatePerSecond, this.mathMethodForDisplay);
-		var plus = (realRatePerSecond < 0) ? "" : "+";
+		var rateString = this.getRateString();
 		var text =  this.displayValue;
 		var html = '<span class="currency-val">' + text + '</span>';
 		var symbol = "";
-		
+
 		text += " / " + this.displayMax;
 		html += '<span class="currency-out-of">/</span><span class="currency-max">' + this.displayMax.toLocaleString() + '</span>';
 
 		if (realRatePerSecond != 0) {
-		 	text += " (" + plus + ratePerSecond.toLocaleString() + "/s)";
-		 	html += ' <span class="currency-rate">(' + plus + ratePerSecond.toLocaleString() + '/s)</span>';
+		 	text += " (" + rateString + "/s)";
+		 	html += ' <span class="currency-rate">(' + rateString + '/s)</span>';
 		}
 		if (this.symbol.length > 0 && this.symbolBefore) {
 			html = '<span class="currency-symbol">' + this.symbol + '</span>' + html;
@@ -171,7 +260,33 @@
 		this.element.innerHTML = html;
 		this.element.setAttribute("title", this.displayName + ": " + text);
 		return true;
-	}
+	};
+	Currency.prototype.drawValue = function (valueType) {
+		var elementsArray = this.elements[valueType];
+		var i = elementsArray.length;
+		var html;
+		while (i--) {
+			if (elementsArray[i] !== null) {
+				switch (valueType) {
+					case "val":
+						html = this.displayValue;
+						break;
+					case "rate":
+						html = this.getRateString(false);
+						break;
+					case "min":
+						html = this.min; // TODO: more formatting
+						break;
+					case "max":
+						html = this.max; // TODO: more formatting
+						break;
+					default:
+						html = "?";
+				}
+				elementsArray[i].innerHTML = html;
+			}
+		}
+	};
 
 	Currency.prototype._increment = function(steps){
 		this.add(steps * this.rate);

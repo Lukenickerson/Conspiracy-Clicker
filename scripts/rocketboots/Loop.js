@@ -21,6 +21,7 @@
 	Loop.prototype._reloop = function(o){
 		if (o.isLooping) {
 			o.iteration++;
+			// TODO: Switch to animation frame -- https://jsperf.com/requestanimationframe-vs-setinterval-loop/7
 			o.timer = window.setTimeout(function runLoop (){
 				o.loop(); 
 			}, o.delay);
