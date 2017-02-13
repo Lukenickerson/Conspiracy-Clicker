@@ -47,6 +47,9 @@ var RocketBoots = {
 		t.parentNode.insertBefore(s, t);
 		return this;
 	},
+	getUniqueId: function () {
+		return Number(new Date()) + Math.round(Math.random() * 999999);
+	},
 
 //==== Component Functions
 

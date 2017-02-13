@@ -128,7 +128,7 @@
 			loopFunction: fn
 		};
 		if (typeof ma.id !== 'string') {
-			ma.id = 'Action-' + Number(new Date()) + Math.round(Math.random() * 1000000);
+			ma.id = 'Action-' + RocketBoots.getUniqueId();
 		}
 		this.modulusActions.push(ma);
 		this.numOfModulusActions = this.modulusActions.length;

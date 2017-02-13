@@ -118,7 +118,7 @@
 		this.message = options.message || "";
 		this.type = options.type || null;
 		this.date = new Date();
-		this.id = "notification-" + Number(new Date()) + Math.round(Math.random() * 1000000);
+		this.id = "notification-" + RocketBoots.getUniqueId();
 	};
 
 
