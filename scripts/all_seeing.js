@@ -4,8 +4,26 @@ RocketBoots.loadComponents([
 	"Incrementer",
 	"Dice",
 	"SoundBank",
-	"Notifier"
+	"Notifier",
+	"Storage"
 ]).ready(function(rb){
+
+	//==== GAME
+
+	var g = new RocketBoots.Game({
+		name: "Conspiracy Clicker",
+		instantiateComponents: [
+			{"state": "StateMachine"},
+			{"loop": "Loop"},
+			{"incrementer": "Incrementer"},
+			{"dice": "Dice"},
+			{"sounds": "SoundBank"},
+			{"notifier": "Notifier"},
+			{"storage": "Storage"}
+		],
+		version: "v1.2-beta1"
+	});
+	var curr = g.currencies = g.incrementer.currencies;
 
 	//==== CONSTANTS
 
@@ -17,25 +35,31 @@ RocketBoots.loadComponents([
 		// Update certain things once every X iterations
 		// 10 ==> once per second
 		LOOP_MODULUS		= 10,
-		SAVE_EVERY_SECONDS	= 10 // 10 seconds
+		SAVE_EVERY_SECONDS	= 10, // 10 seconds
+		TOTAL_POPULATION 	= 314000000,
+		SHORT_CURRENCY_SYMBOLS = {
+			"indMoney" 		: "$"
+			,"polMoney" 	: "$"
+			,"medMoney"		: "$"
+			,"votes"		: "votes"
+			,"minds"		: "minds"
+		},
+		LONG_CURRENCY_SYMBOLS = {
+			"indMoney" 		: "industry $"
+			,"polMoney" 	: "politics $"
+			,"medMoney"		: "media $"
+			,"votes"		: "votes"
+			,"minds"		: "minds"
+		},
+		SHOW_LAST_UPGRADES = 3
 	; 
 
-	//==== GAME, STATES, MAIN LOOP
+	// Other variables
 
-	var g = new RocketBoots.Game({
-		name: "Conspiracy Clicker",
-		instantiateComponents: [
-			{"state": "StateMachine"},
-			{"loop": "Loop"},
-			{"incrementer": "Incrementer"},
-			{"dice": "Dice"},
-			{"sounds": "SoundBank"},
-			{"notifier": "Notifier"}
-		]
-	});
-	var curr = g.currencies = g.incrementer.currencies;
-	g.version = "v1.2-beta1";
-	g.cc = new CCGameClass();
+	g.storage.prefix 	= "Conspiracy-Clicker.";
+	g.winShown 			= false;
+
+	//==== STATES
 
 	g.state.addStates({
 		"preload": {
@@ -49,7 +73,7 @@ RocketBoots.loadComponents([
 					}
 				}
 				// Automatically move on...
-				if (g.cc.loadGame()) {
+				if (g.loadGame()) {
 					g.state.transition("game");
 				} else {
 					g.state.transition("intro");
@@ -82,27 +106,24 @@ RocketBoots.loadComponents([
 			viewName: "game",
 			start: function(){
 				// Load saved game; if none exists then create a baseline save; if all fails, bail out back to intro
-				if (!g.cc.loadGame()) {
-					g.cc.saveGame();
-					if (!g.cc.loadGame()) {
+				if (!g.loadGame()) {
+					g.saveGame();
+					if (!g.loadGame()) {
 						g.state.transition("intro");
 					}
 				}
 				g.calculateAll();
-				g.cc.writeUpgrades();
+				g.writeUpgrades();
 				//o.addFlipCardEvents();
 				$('.upgradeList').hide().fadeIn(1000);
 				$('.metrics').fadeIn(500);
 				$('.progress').slideDown(200);
 				$('.notifications').show();
-				//$('.threeCols').fadeIn(800, function(){
-					g.loop.start();
-				//});
-				
+				g.loop.start();				
 			},
 			end: function(){
 				$('.notifications').hide();
-				g.cc.saveGame();
+				g.saveGame();
 				g.loop.stop();
 			}
 		},
@@ -123,19 +144,19 @@ RocketBoots.loadComponents([
 		}
 	});
 
+	//==== MAIN LOOP
+
 	g.loop.set(function(iteration){
 		g.incrementer.incrementByElapsedTime(undefined, true);
 		g.incrementer.calculate();
 	}, LOOP_DELAY).addActionPerSecond(function(){
 		g.calculateAll();
-		g.cc.displayProgress();
-		g.cc.updateUpgradeAfford();
+		g.displayProgress();
+		g.updateUpgradeAfford();
 	}, 0.5).addActionPerSecond(function(){
-		g.cc.autoSaveGame();
+		g.autoSaveGame();
 		g.displayLastSaveTime();
 	}, 1);
-
-	g.cc.setup(); // TODO: move this to state machine
 
 
 	//===== Currencies
@@ -213,6 +234,26 @@ RocketBoots.loadComponents([
 	g.mainCurrencyNames = ["indMoney", "polMoney", "medMoney", "votes", "minds"];
 
 
+	//==== Upgrades
+
+	g.importUpgradeData = function (rawUpgrades) {
+		g.loopOverSectors(function(sector){
+			g.incrementer.addUpgrades(rawUpgrades[sector]);
+		});
+	};
+
+	g.buyUpgrade = function($upgrade) {
+		var id = $upgrade.attr("id");
+		var bought = g.incrementer.buyUpgrade(id);
+		if (bought) {
+			g.sounds.play("upgrade1");
+		} else {
+			g.sounds.play("dud");
+		}
+		g.writeUpgrades();
+		return bought;
+	};
+
 
 	//==== Rate Summations
 
@@ -241,29 +282,95 @@ RocketBoots.loadComponents([
 	};
 
 	g.calculateAll = function () {
-		g.cc.calculateUpgradeCounts();
-		g.cc.calculateFlowRates();
-		g.cc.calculateUpgradeRates();			
+		g.calculateUpgradeCounts();
+		g.calculateFlowRates();
+		g.calculateUpgradeRates();			
+	};
+
+	g.calculateUpgradeCounts = function () {
+		g.zeroUpgradeCounts();
+		g.loopOverSectors(function(sector){
+			g.incrementer.loopOverUpgrades(sector, function(upgrade){
+				g.upgradeCounts[sector] += upgrade.owned;
+				g.upgradeCounts.total += upgrade.owned;
+				g.upgradeCounts.uniqueTotal += 1;
+				if (upgrade.owned) {
+					g.upgradeCounts.uniqueOwned += 1;
+				}
+			});
+		});
+		return g.upgradeCounts;
 	};
 
 
-	//===== Timing functions
-
-	g.getSecondsSinceLastSaveTime = function () {
-		var now = new Date(); 
-		return Math.round((now - g.cc.lastSaveDateTime) / 1000);
+	g.calculateUpgradeRates = function () {
+		var o = this;
+		g.zeroUpgradeRates();
+		
+		// Loop through all upgrades
+		g.loopOverSectors(function(sector){
+			g.incrementer.loopOverUpgrades(sector, function(upgrade){		
+				if (upgrade.owned > 0) {
+					if (typeof upgrade.perSecond === 'object') {
+						// Loop through all and see if the upgrade has values
+						for (var ci in g.mainCurrencyNames) {
+							var currName = g.mainCurrencyNames[ci];
+							if (typeof upgrade.perSecond[currName] === 'number') {
+								g.upgradeRates[currName] += (upgrade.owned * upgrade.perSecond[currName]);
+							}
+						}
+					}
+					/*
+					if (typeof upgrade.perClick === 'object') {
+						// Loop through all types and see if the upgrade has values
+						for (var ci in g.mainCurrencyNames) {
+							var currName = g.mainCurrencyNames[ci];
+							if (typeof upgrade.perClick[currName] === 'number') {
+								curr[currName + "PerClick"].val += (upgradeQuantity * upgrade.perClick[currName]);
+							}							
+						}					
+					}
+					*/
+				}
+			});
+		});
 	};
 
-	g.displayLastSaveTime = function () {
-		$('.lastSavedSeconds').html(this.getSecondsSinceLastSaveTime());
+	
+	g.flow = {
+		"from" 			: ""
+		,"to"			: ""
+		,"baseSpeed"	: 1
+		,"percentSpeed"	: 0.005
+		,"efficiency"	: 0.75
 	};
+
+	g.isFlowing = function () {
+		return (this.flow.from.length > 0 && this.flow.to.length > 0);
+	}
+
+	g.calculateFlowRates = function () {
+		var flowSpeed;
+		this.zeroFlowRates();
+		this.flow.baseSpeed = 1.0 + (this.upgradeCounts.total / 20);
+		if (this.isFlowing()) {
+			flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * curr[this.flow.from].val);
+			// Make sure the amount flowing from can support it
+			if (curr[this.flow.from].val >= flowSpeed) {
+				g.flowRates[this.flow.from] -= flowSpeed;
+				g.flowRates[this.flow.to] += (flowSpeed * this.flow.efficiency);
+			}
+		}
+	}
 
 
 	//==== Control
 
+	g.sectors = ["industry", "politics", "media"];
+
 	g.loopOverSectors = function (callback) {
-		for (var sector in g.cc.owned.upgrades) {
-			callback(sector);
+		for (var i = 0; i < g.sectors.length; i++) {
+			callback(g.sectors[i]);
 		}
 	}
 
@@ -275,679 +382,461 @@ RocketBoots.loadComponents([
 	}
 
 
-	/* === Original Conspiracy Clicker Game === */
 
-	function CCGameClass () {
-		// Constants
+	//===== Timing functions
 
-		this.totalPopulation = 314000000;
-		
-		// Static Data
-		this.data = {	// Get from JSON data
-			"upgrades" 	: {}
-			,"groups"	: {}
-		};	
-		// Game Data
-		this.owned = {
-			"upgrades" : {
-				//"industry" : [], "politics" : [], "media" : []
-			}
-		};
-		this.winShown = false;
-		this.isAutoSaveOn = true;
-		this.lastSaveDateTime = new Date();
-		
-		// Constants, Lookups
-		this.sectorArray = ["industry", "politics", "media"];
-		this.shortDisplayValueTypes = {
-			"indMoney" 		: "$"
-			,"polMoney" 	: "$"
-			,"medMoney"		: "$"
-			,"votes"		: "votes"
-			,"minds"		: "minds"
-		};	
-		this.displayValueTypes = {
-			"indMoney" 		: "industry $"
-			,"polMoney" 	: "politics $"
-			,"medMoney"		: "media $"
-			,"votes"		: "votes"
-			,"minds"		: "minds"
-		};
-		// Game Data
-		this.flow = {
-			"from" 			: ""
-			,"to"			: ""
-			,"baseSpeed"	: 1
-			,"percentSpeed"	: 0.005
-			,"efficiency"	: 0.75
-		};
+	g.getSecondsSinceLastSaveTime = function () {
+		var now = new Date(); 
+		return Math.round((now - g.lastSaveDateTime) / 1000);
+	};
 
-		
-		//=============================================== OUTPUT DISPLAY
+	g.displayLastSaveTime = function () {
+		var $lss = $('.lastSavedSeconds');
+		if ($lss.is(":visible")) {
+			$lss.html(this.getSecondsSinceLastSaveTime());
+		}
+	};
 
-		this.displayProgress = function () {
-			var highVal = 0,
-				lowVal = 0,
-				totalControlled = 0,
-				controlProgress = 0,
-				unlockPercent = 0,
-				combinedPercent = 0;
+	//==== Save/Load
+	
+	g.isAutoSaveOn = true;
+	g.lastSaveDateTime = new Date();
 
-			if (curr.votes.val > curr.minds.val) {
-				highVal = curr.votes.val;
-				lowVal = curr.minds.val;
-			} else {
-				highVal = curr.minds.val;
-				lowVal = curr.votes.val;		
-			}
-			totalControlled = highVal + (lowVal/2);
-			if (totalControlled > this.totalPopulation) {
-				totalControlled = this.totalPopulation;
-			}
-			controlProgress = (totalControlled / this.totalPopulation) * 100;
-			if (controlProgress < 0) {
-				controlProgress = Math.round( controlProgress * 100000 ) / 100000;
-			} else {
-				controlProgress = Math.round( controlProgress * 10 ) / 10;
-			}
-
-			unlockPercent =  Math.floor((g.upgradeCounts.uniqueOwned / g.upgradeCounts.uniqueTotal) * 100);
-
-			combinedPercent = (controlProgress + unlockPercent) / 2;
-
-			// Display
-
-			this.$mindControlPercent.html(controlProgress);
-			this.$upgradeUnlockedPercent.html(unlockPercent);
-
-			this.$progressVal.html(combinedPercent + "%");
-			this.$progressBar.html('<div style="width: ' + combinedPercent + '%"></div>');
-			
-			// Check for win
-
-			if (combinedPercent == 100 && !this.winShown) {
-				g.state.transition("win");
-				this.winShown = true;
+	g.autoSaveGame = function () {
+		if (g.isAutoSaveOn) {
+			if (g.getSecondsSinceLastSaveTime() > SAVE_EVERY_SECONDS) {
+				g.saveGame();
 			}
 		}
-		
-		this.displayNumber = function (n, $elt) {
-			//console.log($elt);
-			$elt.html(this.getDisplayNumber(n));
-		}
-		
-		this.getDisplayNumber = function(n , addK) {
-			if (n < 10) {
-				n = Math.round( n * 10 ) / 10;
-			} else if (n > 99999 && typeof addK === 'boolean' && addK) {
-				n = Math.round(n / 1000);
-				n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
-				n += "k";
-			} else {
-				n = parseInt(n);
-				n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
-			}
-			return n;
-		}
-		
-		this.writeUpgrades = function () {
-			for (var sector in this.owned.upgrades) {
-				this.writeUpgradesForSector(sector);
-			}
-		}
-		
-		this.writeUpgradesForSector = function (sector) {
-			var h = "";
-			var sectorUpgrades = this.owned.upgrades[sector];
-			var lastOwnedUpgradeIndex = -1;
-			var SHOW_LAST_UPGRADES = 3;
-			var unknownCount = 0;
-			for (var ugi in sectorUpgrades) {
-				var upgradeCount = sectorUpgrades[ugi];
-				var upgrade = this.data.upgrades[sector][ugi];
-				var canAfford = this.canAffordUpgrade(sector, ugi);
-				
-				h += '<li class="upgrade clearfix flip ug-' + ugi;
-				if (canAfford) {
-					h += ' afford ';
-				} else {
-					h += ' cannotAfford ';
-				}
-				if (upgradeCount > 0) {
-					h += ' owned ';
-					lastOwnedUpgradeIndex = ugi;
-				} else {
-					h += ' notOwned ';
-				}
-				if ((ugi - lastOwnedUpgradeIndex) > SHOW_LAST_UPGRADES) {
-					h += ' unknown ';
-					unknownCount++;
-				}
-				h += '" ' // end class
-					+ ' data-ugi="' + ugi + '" '
-					+ ' data-sector="' + sector + '" '
-					+ '>'
-					+ '<div class="front">'
-					+ '<div class="name">' + upgrade.name + '</div>'
-					
-					+ '<button type="button" class="buy"><div class="buyText">Buy</div>'
-				;
-				for (var currName in upgrade.baseCost) {
-					var finalCost = this.calcCost(upgrade, upgradeCount, currName);
-					h += '<div class="cost val">'
-						+ this.getDisplayNumber(finalCost, true)
-						+ ' ' + this.shortDisplayValueTypes[currName]
-						+ '</div>'
-					;
-				}
-				h += '</button>'
-					+ '<div class="count">' 
-					+ ((upgradeCount == 0) ? '-' : upgradeCount)
-					+ '</div>'
-					+ '</div>' // endof front
-					+ '<div class="back">'
-				;
-				if (typeof upgrade.details === 'string') {
-					h += '<div class="details">' + upgrade.details + '</div>';
-				}
-				if (typeof upgrade.perSecond === 'object') {
-					h += '<ul class="">';
-					for (var currName in upgrade.perSecond) {
-						h += '<li>' 
-							+ ((upgrade.perSecond[currName] > 0) ? "+" : "")
-							+ this.getDisplayNumber(upgrade.perSecond[currName])
-							+ ' ' + this.displayValueTypes[currName]
-							+ '/sec'
-							+ '</li>'
-						;
-					}
-					h += '</ul>';
-				}
-				h += '</div>' // endof back
-					+ '</li>'
-				;
-			}
-			if (unknownCount > 0) {
-				h += '<div class="upgrades-tease">+ ' + unknownCount + ' more upgrades</div>';
-			}
-			if (typeof this.$upgradeLists[sector] !== 'undefined') {
-				this.$upgradeLists[sector].html(h);
-				this.addFlipCardEvents(this.$upgradeLists[sector]);
-			}
-		}
-		
-		this.updateUpgradeAfford = function () {
-			for (var sector in this.owned.upgrades) {
-				var sectorUpgrades = this.owned.upgrades[sector];
-				for (var ugi in sectorUpgrades) {
-					var $upgrade = $('section.' + sector + ' .ug-' + ugi);
-					var upgradeCount = sectorUpgrades[ugi];
-					if (upgradeCount > 0) {
-						$upgrade.addClass("owned").removeClass("notOwned");
-					} else {
-						$upgrade.addClass("notOwned").removeClass("owned");
-					}
-					var canAfford = this.canAffordUpgrade(sector, ugi);
-					if (canAfford) {
-						$upgrade.addClass("afford").removeClass("cannotAfford");
-					} else {
-						$upgrade.addClass("cannotAfford").removeClass("afford");
-					}				
-				}
-			}	
-		}
+	};
 
-		
-		//=============================================== Clickity Click
-		
-		this.industryClick = function (evt) {
-			g.sounds.play("coin1");
-			curr.indMoney.add(curr.indMoneyPerClick.val);
-			this.animateClickEarning(curr.indMoneyPerClick.val, evt);
-		}
-
-		this.politicsClick = function (evt) {
-			g.sounds.play("coin2");
-			curr.polMoney.add(curr.polMoneyPerClick.val);
-			this.animateClickEarning(curr.polMoneyPerClick.val, evt);
-		}
-
-		this.mediaClick = function (evt) {
-			g.sounds.play("coin1");
-			curr.medMoney.add(curr.medMoneyPerClick.val);
-			this.animateClickEarning(curr.medMoneyPerClick.val, evt);
-		}
-
-		this.animateClickEarning = function (amount, evt) {
-			var x = evt.pageX, y = evt.pageY;
-			var $div = $('<div class="click-earn">+$' + amount + '</div>').css({
-				//position: "absolute",
-				opacity: 1
-			}).appendTo('body');
-			x = x - ($div.width() / 2); // center
-			y = y - ($div.height() * 1.5); // go above cursor
-			$div.css({ 
-				top: 	y + "px",
-				left: 	x + "px"
-			});
-			$div.animate({
-				top: (y - 200) + "px",
-				left: (x + g.dice.getRandomAround(100)) + "px",
-				opacity: 0,
-				fontSize: "80%"
-			}, 1000, function(){
-				$div.remove();
-			});
-		}
-
-		//=============================================== Numbers
-		
-		this.calculateUpgradeCounts = function () {
-			g.zeroUpgradeCounts();
-			for (var s in this.sectorArray) {
-				var sector = this.sectorArray[s];
-				var sectorUpgrades = this.owned.upgrades[sector];
-				for (var ugi in sectorUpgrades) {
-					g.upgradeCounts[sector] += sectorUpgrades[ugi];
-					g.upgradeCounts.total += sectorUpgrades[ugi];
-					g.upgradeCounts.uniqueTotal += 1;
-					if (sectorUpgrades[ugi] > 0) {
-						g.upgradeCounts.uniqueOwned += 1;
-					}
-				}
-			}
-			return g.upgradeCounts;
-		};
-
-		
-		this.isFlowing = function () {
-			return (this.flow.from.length > 0 && this.flow.to.length > 0);
-		}
-
-		this.calculateFlowRates = function () {
-			var flowSpeed;
-			g.zeroFlowRates();
-			this.flow.baseSpeed = 1.0 + (g.upgradeCounts.total / 20);
-			if (this.isFlowing()) {
-				flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * curr[this.flow.from].val);
-				// Make sure the amount flowing from can support it
-				if (curr[this.flow.from].val >= flowSpeed) {
-					flowRates[this.flow.from] -= flowSpeed;
-					flowRates[this.flow.to] += (flowSpeed * this.flow.efficiency);
-				}
-			}
-		}
-
-		this.calculateUpgradeRates = function () {
-			var o = this;
-			
-			g.zeroUpgradeRates();
-			
-			// Loop through all upgrades
-			g.loopOverSectors(function(sector){
-				var sectorUpgrades = o.owned.upgrades[sector];
-				for (var ug in sectorUpgrades) {
-					var upgradeQuantity = sectorUpgrades[ug];
-					if (upgradeQuantity > 0) {
-						var upgrade = o.data.upgrades[sector][ug];
-						if (typeof upgrade.perSecond === 'object') {
-							// Loop through all and see if the upgrade has values
-							for (var ci in g.mainCurrencyNames) {
-								var currName = g.mainCurrencyNames[ci];
-								if (typeof upgrade.perSecond[currName] === 'number') {
-									g.upgradeRates[currName] += (upgradeQuantity * upgrade.perSecond[currName]);
-								}						
-							}
-						}
-						/*
-						if (typeof upgrade.perClick === 'object') {
-							// Loop through all types and see if the upgrade has values
-							for (var ci in g.mainCurrencyNames) {
-								var currName = g.mainCurrencyNames[ci];
-								if (typeof upgrade.perClick[currName] === 'number') {
-									curr[currName + "PerClick"].val += (upgradeQuantity * upgrade.perClick[currName]);
-								}							
-							}					
-						}
-						*/
-					}
-				}
-			});
-		}
-		
-		this.buyUpgrade = function(sector, upgradeIndex, doWriteUpgrades) {
-			console.log("buyUpgrade " + sector + ", " + upgradeIndex);
-			var upgrade = this.data.upgrades[sector][upgradeIndex];
-			if (this.canAffordUpgrade(sector, upgradeIndex)) {
-				// The amount before the purchase
-				var upgradeQuantity = this.owned.upgrades[sector][upgradeIndex];
-				// Remove the cost from the totals...
-				for (var currName in upgrade.baseCost) {
-					curr[currName].subtract(this.calcCost(upgrade, upgradeQuantity, currName));
-				}			
-				// Add the upgrade to owned things
-				this.owned.upgrades[sector][upgradeIndex] += 1;
-				
-				if (typeof doWriteUpgrades !== 'boolean') doWriteUpgrades = true;
-				if (doWriteUpgrades) this.writeUpgrades();
-				g.sounds.play("upgrade1");
-				return true;
-			} else {
-				g.sounds.play("dud");
-				return false;
-			}
-		}
-		
-		this.calcCost = function (upgrade, upgradeQuantity, currencyName) {
-			var finalCost = upgrade.baseCost[currencyName];
-			finalCost = (finalCost * Math.pow(upgrade.costMultiplier, upgradeQuantity));
-			return finalCost;
-		}
-		
-		this.canAffordUpgrade = function (sector, upgradeIndex) {
-			var upgrade = this.data.upgrades[sector][upgradeIndex];
-			var upgradeQuantity = this.owned.upgrades[sector][upgradeIndex];
-			// Loop over all value types and compare to current totals
-			if (typeof upgrade.baseCost === 'object' &&
-				typeof upgrade.costMultiplier === 'number') 
-			{
-				for (var ci in g.mainCurrencyNames) {
-					var currName = g.mainCurrencyNames[ci];
-					if (typeof upgrade.baseCost[currName] === 'number') {
-						var finalCost = this.calcCost(upgrade, upgradeQuantity, currName);
-						if (curr[currName].val < finalCost) {
-							return false;
-						}
-					}
-					
-				}
-			} else {
-				console.error("Upgrade (" + sector + ", " + upgrade + ") is missing baseCost or costMultiplier");
-				return false;
-			}
-			return true;
-		}
-		
-
-		
-		//=============================================== SETUP & LAUNCH
-		
-		this.addFlipCardEvents = function ($elt) {
-			console.log("Adding flipcard events");
-			if (typeof $elt === 'undefined') {
-				var $base = $('.flip');
-			} else {
-				var $base = $elt.find('.flip');
-			}
-			$base.off("click").click(function () {
-				var $flipcard = $(this);
-				if ($flipcard.hasClass("flipped")) {
-					$flipcard.removeClass('flipped');
-				} else {
-					$flipcard.addClass('flipped');
-				}
-			});
-		}
-		
-		this.setup = function () {
-			var o = this;
-			var ajaxGetData = {};
-			
-			$.ajax({
-				type: 		"get"
-				,url:		"data/cc_data.json"
-				,dataType: 	"json"
-				,complete: function(x,t) {
-				}
-				,success: function(responseObj) {
-					try {
-						//var responseObj = $.parseJSON(response);
-						o.data.upgrades = responseObj.upgrades;
-						o.data.groups 	= responseObj.groups;
-						console.log("Ajax Success loading data");
-					} catch (err) {
-						g.notifier.warn("ERROR IN JSON DATA");
-						console.log(responseObj);
-					}
-					// Loop through upgrade data and setup default ownership
-					for (sector in o.data.upgrades) {
-						o.owned.upgrades[sector] = [];
-						for (ug in o.data.upgrades[sector]) {
-							o.owned.upgrades[sector][ug] = 0;
-						}
-					}
-				}
-				,failure: function(msg) {
-					console.log("Fail\n"+ msg);
-				}
-				,error: function(x, textStatus, errorThrown) {
-					console.log("Error\n" + x.responseText + "\nText Status: " + textStatus + "\nError Thrown: " + errorThrown);
-				}
-			});
-		
-		
-		
-			//=========== Setup UI
-
-			$('.version').html(g.version);
-			
-			var $indClicker = $('.industry .clicker');
-			var $polClicker = $('.politics .clicker');
-			var $medClicker = $('.media .clicker');	
-			
-			o.$progressVal = $('.progress .progressVal');
-			o.$progressBar = $('.progress .progressBar');
-
-			o.$mindControlPercent = $('.mindControlPercent .val');
-			o.$upgradeUnlockedPercent = $('.upgradeUnlockedPercent .val');
-			
-			$indClicker.click(function(e){	o.industryClick(e); });
-			$polClicker.click(function(e){	o.politicsClick(e); });
-			$medClicker.click(function(e){	o.mediaClick(e); });
-			
-			$('.save').click(function(e){
-				g.sounds.play("save1");
-				o.saveGame(true);
-				//g.notifier.notify('Saved');
-			});
-			$('.load').click(function(e){
-				g.sounds.play("save1");
-				if (o.loadGame()) {
-					g.state.transition("game");
-				} else {
-					g.state.transition("intro");
-				}
-			});
-			$('.delete').click(function(e){
-				g.sounds.play("shock1");
-				o.deleteGame(true);
-				//g.state.transition("intro");
-			});
-			$('.toggleSound').click(function(e){
-				if (g.sounds.toggle()) {
-					g.sounds.play("dud2");
-				}
-				o.saveGame();
-			});
-			/*
-			$('.toggleAutoSave').click(function(e){
-				o.isAutoSaveOn = !o.isAutoSaveOn;
-				g.notifier.warn("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
-			});
-			*/
-			
-			
-			var $arrows = $('.focus .arrow');
-			$arrows.click(function(e){
-				var $thisArrow = $(this);
-				if ($thisArrow.hasClass("active")) {
-					$arrows.removeClass("active");
-					o.flow.from = "";
-					o.flow.to = "";
-				} else {
-					g.sounds.play("transfer1");
-					$arrows.removeClass("active");
-					$thisArrow.addClass("active");
-					o.flow.from = $thisArrow.data("flowfrom");
-					o.flow.to = $thisArrow.data("flowto");
-				}
-			});
-			
-			o.$upgradeLists = {};
-			
-			$('.metrics').click(function(e){
-				$(this).find('.perClick').toggle(300);
-			});
-			
-			for (var s in o.sectorArray) {
-				(function(sector){
-					o.$upgradeLists[sector] = $('section.' + sector + ' ul.upgradeList');
-					//console.log("Adding click event to List for sector: " + sector);
-					//console.log(o.$upgradeLists[sector]);
-					
-					o.$upgradeLists[sector].on("click", function(e){
-						
-						var $target = $(e.target);
-						var $ugli = $target.closest('li.upgrade');
-						//console.log("List Clicked - sector: " + sector);
-						//console.log($ugli);
-
-						if ($target.hasClass("buy") || $target.parent().hasClass("buy")) {
-							var upgradeIndex = $ugli.data("ugi");
-							o.buyUpgrade(sector, upgradeIndex);
-						} else {
-							//$ugli.find('.details').toggle();
-						}
-						e.stopPropagation();
-					});
-				}(o.sectorArray[s]));
-			}
-			
-			// Scroll Event
-			var $win = $(window);
-			//var $3cols = $('.threeCols');
-			var $body = $('body');
-			$win.scroll(function() {
-				var height = $win.scrollTop();
-				if (height > 450) {
-					$body.addClass("scrolled-down");
-					//$3cols.addClass("fixed");
-				} else {
-					$body.removeClass("scrolled-down");
-					//$3cols.removeClass("fixed");
-
-				}
-			});
-			
-			//$('.upgradeList > li').click(function(e){	o.buyUpgrade(1); });
-
-
-			//=========== Launch!
-			var launchTimer = window.setTimeout(function(){
-				o.launch(0);
-			}, 250);
-		}
-		
-		this.launch = function (iteration) {
-			var o = this;
-			iteration++;
-			if (Object.keys(o.data.upgrades).length > 0) {
-				console.log("Launching Game!");
-				g.state.transition("preload");
-			} else if (iteration < 40) {
-				console.log("Launch... Cannot start yet. " + iteration);
-				var launchTimer = window.setTimeout(function(){
-					o.launch(iteration);
-				}, 250);			
-			} else {
-				g.notifier.error("Cannot launch game.");
-			}
-		}
-
-		//==== Save/Load
-		
-		this.autoSaveGame = function () {
-			if (this.isAutoSaveOn) {
-				if (g.getSecondsSinceLastSaveTime() > SAVE_EVERY_SECONDS) {
-					this.saveGame();
-				}
-			}
-		};
-
-		this.saveGame = function(showNotice) {
-			localStorage.setItem("owned", JSON.stringify(this.owned));
-			localStorage.setItem("currencies", JSON.stringify({
+	g.saveGame = function(showNotice) {
+		this.storage.save({
+			"upgrades": g.incrementer.exportUpgradeOwnership(),
+			"currencies": {
 				indMoney: curr.indMoney.val,
 				polMoney: curr.polMoney.val,
 				medMoney: curr.medMoney.val,
 				votes: curr.votes.val,
 				minds: curr.minds.val,
-			}));
-			localStorage.setItem("isSoundOn", JSON.stringify(g.sounds.isSoundOn));
-			localStorage.setItem("version", g.version);
+			},
+			"isSoundOn": g.sounds.isSoundOn,
+			"version": g.version
+		});
 
-			this.lastSaveDateTime = new Date();
-			g.displayLastSaveTime();
-			console.log("Game saved.");
-		}
-		
-		this.deleteGame = function() {
-			localStorage.removeItem("owned");
-			localStorage.removeItem("currencies");
-			localStorage.removeItem("version");
-			g.notifier.warn("Saved game deleted!");
-			// TODO: Make a way to delete/restart without reloading the page
-			window.location.reload(true); 
-		}	
-		
-		this.loadGame = function () {
-			var o = this;
-			var isLoaded = false;
-			// Load game data (two objects)
-			console.log("checking localStorage", localStorage.getItem("owned"), localStorage.getItem("currencies"));
-			var loadedOwned = localStorage.getItem("owned");
-			if (loadedOwned !== null) {
-				o.owned = JSON.parse(loadedOwned);
-				isLoaded = true;
-			}
-			var loadedCurrencies = localStorage.getItem("currencies");
-			if (loadedCurrencies !== null) {
-				loadedCurrencies = JSON.parse(loadedCurrencies);
-				g.loopOverCurrencies(function(currName){
-					curr[currName].setVal(loadedCurrencies[currName]);
-				});
-				isLoaded = true;
-			}
-			var loadedSound = localStorage.getItem("isSoundOn");
-			if (loadedSound !== null) {
-				g.sounds.toggle( (JSON.parse(loadedSound) ? true : false) );
-			}
-			var version = localStorage.getItem("version");
-			if (version !== g.version) {
-				g.notifier.warn("Loaded a saved game that was saved with a different game version than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game.");
-			}
-
-
-			return isLoaded;
-		}
-		
-		
-		//========================================= Helpers
-		
-		this.getCommaSeparatedNumber = function (val) {
-			// From: http://stackoverflow.com/a/12947816/1766230
-			while (/(\d+)(\d{3})/.test(val.toString())){
-				val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
-			}
-			return val;
-		}	
-
-		//========================================= Construction
-		if (!window.localStorage) {
-			alert("This browser does not support localStorage, so this app will not run properly. Please try another browser, such as the most current version of Google Chrome.");
-		}
-		if (!window.jQuery) { alert("ERROR - jQuery is not loaded!"); }
+		this.lastSaveDateTime = new Date();
+		g.displayLastSaveTime();
+		console.log("Game saved.");
 	}
+	
+	g.deleteGame = function() {
+		g.storage.remove(["upgrades", "currencies", "version"]);
+		g.notifier.warn("Saved game deleted!");
+		// TODO: Make a way to delete/restart without reloading the page
+		window.location.reload(true); 
+	}	
+	
+	g.loadGame = function () {
+		var EXPECTED_KEYS = 4;
+		var loaded = g.storage.load({
+			"upgrades": function(data) {
+				g.incrementer.importUpgradeOwnership(data);
+			},
+			"currencies": function(data) {
+				g.loopOverCurrencies(function(currName){
+					curr[currName].setVal(data[currName]);
+				});
+			},
+			"isSoundOn": function(data) {
+				g.sounds.toggle(data);
+			},
+			"version": function(data) {
+				if (data !== g.version) {
+					g.notifier.warn("Loaded a saved game that was saved with a different game version (" + data + ") than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game.");
+				}			
+			}
+		});
+		return (loaded.length === EXPECTED_KEYS) ? true : false;
+	}
+
+	
+	//=============================================== OUTPUT DISPLAY
+
+	g.displayProgress = function () {
+		var highVal = 0,
+			lowVal = 0,
+			totalControlled = 0,
+			controlProgress = 0,
+			unlockPercent = 0,
+			combinedPercent = 0;
+
+		if (curr.votes.val > curr.minds.val) {
+			highVal = curr.votes.val;
+			lowVal = curr.minds.val;
+		} else {
+			highVal = curr.minds.val;
+			lowVal = curr.votes.val;		
+		}
+		totalControlled = highVal + (lowVal/2);
+		if (totalControlled > TOTAL_POPULATION) {
+			totalControlled = TOTAL_POPULATION;
+		}
+		controlProgress = (totalControlled / TOTAL_POPULATION) * 100;
+		if (controlProgress < 0) {
+			controlProgress = Math.round( controlProgress * 100000 ) / 100000;
+		} else {
+			controlProgress = Math.round( controlProgress * 10 ) / 10;
+		}
+
+		unlockPercent =  Math.floor((g.upgradeCounts.uniqueOwned / g.upgradeCounts.uniqueTotal) * 100);
+
+		combinedPercent = (controlProgress + unlockPercent) / 2;
+
+		// Display
+
+		this.$mindControlPercent.html(controlProgress);
+		this.$upgradeUnlockedPercent.html(unlockPercent);
+
+		this.$progressVal.html(combinedPercent + "%");
+		this.$progressBar.html('<div style="width: ' + combinedPercent + '%"></div>');
+		
+		// Check for win
+
+		if (combinedPercent == 100 && !this.winShown) {
+			g.state.transition("win");
+			this.winShown = true;
+		}
+	}
+	
+	g.displayNumber = function (n, $elt) {
+		//console.log($elt);
+		$elt.html(this.getDisplayNumber(n));
+	}
+	
+	g.getDisplayNumber = function(n , addK) {
+		if (n < 10) {
+			n = Math.round( n * 10 ) / 10;
+		} else if (n > 99999 && typeof addK === 'boolean' && addK) {
+			n = Math.round(n / 1000);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+			n += "k";
+		} else {
+			n = parseInt(n);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+		}
+		return n;
+	}
+	
+	g.writeUpgrades = function () {
+		var o = this;
+		g.loopOverSectors(function(sector){
+			o.writeUpgradesForSector(sector);
+		});
+	}
+	
+	g.writeUpgradesForSector = function (sector) {
+		var o = this;
+		var h = "";
+		var lastOwnedUpgradeIndex = -1;
+		var unknownCount = 0;
+		g.incrementer.loopOverUpgrades(sector, function(upgrade, i){
+			var canAfford = g.incrementer.canAffordUpgrade(upgrade);
+			var cost = upgrade.cost();
+			
+			h += '<li class="upgrade clearfix flip ug-' + i;
+			h += ((canAfford) ? ' afford ' : ' cannotAfford ');
+
+			if (upgrade.owned > 0) {
+				h += ' owned ';
+				lastOwnedUpgradeIndex = i;
+			} else {
+				h += ' notOwned ';
+			}
+			if ((i - lastOwnedUpgradeIndex) > SHOW_LAST_UPGRADES) {
+				h += ' unknown ';
+				unknownCount++;
+			}
+			h += '" ' // end class
+				+ ' id="' + upgrade.id + '" '
+				+ ' data-sector="' + sector + '" '
+				+ '>'
+				+ '<div class="front">'
+				+ '<div class="name">' + upgrade.name + '</div>'
+				
+				+ '<button type="button" class="buy"><div class="buyText">Buy</div>'
+			;
+			for (var currName in cost) {
+				h += '<div class="cost val">'
+					+ o.getDisplayNumber(cost[currName], true)
+					+ ' ' + SHORT_CURRENCY_SYMBOLS[currName]
+					+ '</div>'
+				;
+			}
+			h += '</button>'
+				+ '<div class="count">' 
+				+ ((upgrade.owned == 0) ? '-' : upgrade.owned)
+				+ '</div>'
+				+ '</div>' // endof front
+				+ '<div class="back">'
+			;
+			if (typeof upgrade.description === 'string') {
+				h += '<div class="details">' + upgrade.description + '</div>';
+			}
+			if (typeof upgrade.perSecond === 'object') {
+				h += '<ul class="">';
+				for (var currName in upgrade.perSecond) {
+					h += '<li>' 
+						+ ((upgrade.perSecond[currName] > 0) ? "+" : "")
+						+ o.getDisplayNumber(upgrade.perSecond[currName])
+						+ ' ' + LONG_CURRENCY_SYMBOLS[currName]
+						+ '/sec'
+						+ '</li>'
+					;
+				}
+				h += '</ul>';
+			}
+			h += '</div>' // endof back
+				+ '</li>'
+			;
+		});
+		if (unknownCount > 0) {
+			h += '<div class="upgrades-tease">+ ' + unknownCount + ' more upgrades</div>';
+		}
+		if (typeof o.$upgradeLists[sector] !== 'undefined') {
+			o.$upgradeLists[sector].html(h);
+			o.addFlipCardEvents(o.$upgradeLists[sector]);
+		}
+	}
+
+	g.updateUpgradeAfford = function () {
+		var o = this;
+		g.loopOverSectors(function(sector){
+			o.updateUpgradeAffordForSector(sector);
+		});
+	};
+
+	g.updateUpgradeAffordForSector = function (sector) {
+		g.incrementer.loopOverUpgrades(sector, function(upgrade){
+			var $upgrade = $('#' + upgrade.id);
+			var canAfford = g.incrementer.canAffordUpgrade(upgrade);
+			if (upgrade.owned > 0) {
+				$upgrade.addClass("owned").removeClass("notOwned");
+			} else {
+				$upgrade.addClass("notOwned").removeClass("owned");
+			}
+			if (canAfford) {
+				$upgrade.addClass("afford").removeClass("cannotAfford");
+			} else {
+				$upgrade.addClass("cannotAfford").removeClass("afford");
+			}
+		});
+	};
+
+	
+	//=============================================== Clickity Click
+	
+	g.industryClick = function (evt) {
+		g.sounds.play("coin1");
+		curr.indMoney.add(curr.indMoneyPerClick.val);
+		this.animateClickEarning(curr.indMoneyPerClick.val, evt);
+	}
+
+	g.politicsClick = function (evt) {
+		g.sounds.play("coin2");
+		curr.polMoney.add(curr.polMoneyPerClick.val);
+		this.animateClickEarning(curr.polMoneyPerClick.val, evt);
+	}
+
+	g.mediaClick = function (evt) {
+		g.sounds.play("coin1");
+		curr.medMoney.add(curr.medMoneyPerClick.val);
+		this.animateClickEarning(curr.medMoneyPerClick.val, evt);
+	}
+
+	g.animateClickEarning = function (amount, evt) {
+		var x = evt.pageX, y = evt.pageY;
+		var $div = $('<div class="click-earn">+$' + amount + '</div>').css({
+			//position: "absolute",
+			opacity: 1
+		}).appendTo('body');
+		x = x - ($div.width() / 2); // center
+		y = y - ($div.height() * 1.5); // go above cursor
+		$div.css({ 
+			top: 	y + "px",
+			left: 	x + "px"
+		});
+		$div.animate({
+			top: (y - 200) + "px",
+			left: (x + g.dice.getRandomAround(100)) + "px",
+			opacity: 0,
+			fontSize: "80%"
+		}, 1000, function(){
+			$div.remove();
+		});
+	}
+
+	//=============================================== SETUP & LAUNCH
+	
+	g.addFlipCardEvents = function ($elt) {
+		if (typeof $elt === 'undefined') {
+			var $base = $('.flip');
+		} else {
+			var $base = $elt.find('.flip');
+		}
+		$base.off("click").click(function () {
+			var $flipcard = $(this);
+			if ($flipcard.hasClass("flipped")) {
+				$flipcard.removeClass('flipped');
+			} else {
+				$flipcard.addClass('flipped');
+			}
+		});
+	};
+	
+	g.setup = function () {
+		var o = this;
+		var ajaxGetData = {};
+		
+	
+		//=========== Setup UI
+
+		$('.version').html(g.version);
+		
+		var $indClicker = $('.industry .clicker');
+		var $polClicker = $('.politics .clicker');
+		var $medClicker = $('.media .clicker');	
+		
+		o.$progressVal = $('.progress .progressVal');
+		o.$progressBar = $('.progress .progressBar');
+
+		o.$mindControlPercent = $('.mindControlPercent .val');
+		o.$upgradeUnlockedPercent = $('.upgradeUnlockedPercent .val');
+		
+		$indClicker.click(function(e){	o.industryClick(e); });
+		$polClicker.click(function(e){	o.politicsClick(e); });
+		$medClicker.click(function(e){	o.mediaClick(e); });
+		
+		$('.save').click(function(e){
+			g.sounds.play("save1");
+			g.saveGame(true);
+			//g.notifier.notify('Saved');
+		});
+		$('.load').click(function(e){
+			g.sounds.play("save1");
+			if (g.loadGame()) {
+				g.state.transition("game");
+			} else {
+				g.state.transition("intro");
+			}
+		});
+		$('.delete').click(function(e){
+			g.sounds.play("shock1");
+			g.deleteGame(true);
+			//g.state.transition("intro");
+		});
+		$('.toggleSound').click(function(e){
+			if (g.sounds.toggle()) {
+				g.sounds.play("dud2");
+			}
+			g.saveGame();
+		});
+		/*
+		$('.toggleAutoSave').click(function(e){
+			o.isAutoSaveOn = !o.isAutoSaveOn;
+			g.notifier.warn("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
+		});
+		*/
+		
+		
+		var $arrows = $('.focus .arrow');
+		$arrows.click(function(e){
+			var $thisArrow = $(this);
+			if ($thisArrow.hasClass("active")) {
+				$arrows.removeClass("active");
+				g.flow.from = "";
+				g.flow.to = "";
+			} else {
+				g.sounds.play("transfer1");
+				$arrows.removeClass("active");
+				$thisArrow.addClass("active");
+				g.flow.from = $thisArrow.data("flowfrom");
+				g.flow.to = $thisArrow.data("flowto");
+			}
+		});
+		
+		o.$upgradeLists = {};
+		
+		$('.metrics').click(function(e){
+			$(this).find('.perClick').toggle(300);
+		});
+		
+		g.loopOverSectors(function(sector){
+			o.$upgradeLists[sector] = $('section.' + sector + ' ul.upgradeList');
+			//console.log("Adding click event to List for sector: " + sector);
+			//console.log(o.$upgradeLists[sector]);
+			
+			o.$upgradeLists[sector].on("click", function(e){
+				
+				var $target = $(e.target);
+				var $ugli = $target.closest('li.upgrade');
+
+				if ($target.hasClass("buy") || $target.parent().hasClass("buy")) {
+					g.buyUpgrade($ugli);
+				} else {
+					//$ugli.find('.details').toggle();
+				}
+				e.stopPropagation();
+			});
+		});
+		
+		// Scroll Event
+		var $win = $(window);
+		//var $3cols = $('.threeCols');
+		var $body = $('body');
+		$win.scroll(function() {
+			var height = $win.scrollTop();
+			if (height > 450) {
+				$body.addClass("scrolled-down");
+				//$3cols.addClass("fixed");
+			} else {
+				$body.removeClass("scrolled-down");
+				//$3cols.removeClass("fixed");
+
+			}
+		});
+
+		$.ajax({
+			type: 		"get"
+			,url:		"data/cc_data.json"
+			,dataType: 	"json"
+			,complete: function(x,t) {
+				g.state.transition("preload");
+			}
+			,success: function(responseObj) {
+				g.importUpgradeData(responseObj.upgrades);
+			}
+			,failure: function(msg) {
+				console.log("Fail\n"+ msg);
+			}
+			,error: function(x, textStatus, errorThrown) {
+				console.log("Error\n" + x.responseText + "\nText Status: " + textStatus + "\nError Thrown: " + errorThrown);
+			}
+		});
+
+	}
+	
+	//==== Helpers
+	
+	g.getCommaSeparatedNumber = function (val) {
+		// From: http://stackoverflow.com/a/12947816/1766230
+		while (/(\d+)(\d{3})/.test(val.toString())){
+			val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+		}
+		return val;
+	}
+	
+
+	g.setup(); // TODO: move this to state machine
 
 	// Expose to the window object for debugging
 	window.g = g;

@@ -14,6 +14,7 @@
 			options = options || {};
 		}
 		this.name = options.name || "Game made with RocketBoots";
+		this.version = options.version || "";
 		
 		this.init(options);
 	}

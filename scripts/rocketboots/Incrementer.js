@@ -7,11 +7,15 @@
 		credits:		"By Luke Nickerson, 2015-2016"
 	};
 
-	var Incrementer = component.Incrementer = function IncrementerClass (){
+	function Incrementer (options) {
 		this.currencies = {};
 		this.currencyArray = [];
 		this.currencyNum = 0;
-	}
+		this.upgrades = [];
+		this.upgradesLookup = {};
+	};
+	component.Incrementer = Incrementer;
+
 	Incrementer.prototype.addCurrencies = function(currencies){
 		for (var i = 0; i < currencies.length; i++) {
 			this.addCurrency(currencies[i]);
@@ -80,9 +84,142 @@
 			callback(curr, this.currencyArray[i]);
 		}
 		return this;	
-	}
+	};
 	
+	//==== Upgrades
 
+	Incrementer.prototype.addUpgrades = function (upgradesList) {
+		if (upgradesList instanceof Array) {
+			for (var i = 0; i < upgradesList.length; i++) {
+				this.addUpgrade(upgradesList[i]);
+			}
+		} else if (typeof upgradesList === "object") {
+			for (var key in upgradesList) {
+				this.addUpgrade(upgradesList[key]);
+			}
+		}
+		return this;
+	};
+
+	Incrementer.prototype.addUpgrade = function (obj) {
+		var ug = new Upgrade(obj);
+		this.upgrades.push(ug);
+		this.upgradesLookup[ug.id] = ug;
+		// Should we check for duplicate names?
+		return this;
+	};
+
+	Incrementer.prototype.getUpgrade = function (id) {
+		return this.upgradesLookup[id];
+	};
+
+	Incrementer.prototype.getUpgrades = function (label) {
+		if (typeof label === "string") {
+			return _.filter(this.upgrades, function(o){
+				return (o.labels.indexOf(label) > -1) ? true : false;
+			});
+		}
+		return this.upgrades;
+	};
+
+	Incrementer.prototype.getOwnedUpgrades = function (label) {
+		var upgrades = this.getUpgrades(label);
+		return _.filter(upgrades, function(o){
+			return (o.owned > 0) ? true : false;
+		});
+	};
+
+	Incrementer.prototype.exportUpgradeOwnership = function () {
+		var upgradeOwnership = [];
+		this.loopOverUpgrades(function(upgrade){
+			upgradeOwnership.push(upgrade.owned);
+		});
+		return upgradeOwnership;
+	};
+
+	Incrementer.prototype.importUpgradeOwnership = function (upgradeOwnership) {
+		if (upgradeOwnership.length !== this.upgrades.length) {
+			console.warn("Upgrade ownership number being imported (" + upgradeOwnership.length + ") does not match number of upgrades (" + this.upgrades.length + ").");
+		}
+		this.loopOverUpgrades(function(upgrade, i){
+			upgrade.owned = upgradeOwnership[i];
+		});
+	};
+
+	Incrementer.prototype.loopOverUpgrades = function (arg1, arg2) {
+		var label, callback, upgrades, i;
+		if (typeof arg1 === "string") {
+			label = arg1;
+			callback = arg2;
+		} else {
+			callback = arg1;
+		}
+		upgrades = this.getUpgrades(label);
+		for (i = 0; i < upgrades.length; i++) {
+			callback(upgrades[i], i, label);
+		}
+	};
+
+	Incrementer.prototype.buyUpgrade = function (id, successCallback, failureCallback) {
+		var ug = this.getUpgrade(id);
+		var cost = ug.cost();
+		var currName;
+		if (this.canAffordUpgrade(ug)) {
+			for (currName in cost) {
+				this.currencies[currName].subtract(cost[currName]);
+			}
+			ug.owned += 1;
+
+			if (typeof successCallback === "function") { successCallback(ug); }
+			return true;
+		} else {
+			if (typeof failureCallback === "function") { failureCallback(ug); }
+			return false;
+		}
+	};
+
+	Incrementer.prototype.canAffordUpgrade = function (arg) {
+		if (typeof arg === 'object') {
+			var ug = arg;
+		} else if (typeof arg === 'string') {
+			var ug = this.getUpgrade(arg);
+		}
+		var cost = ug.cost();
+		var affordCount = 0;
+		var currencyCostCount = 0;
+		for (var currName in cost) {
+			currencyCostCount++;
+			if (this.currencies[currName].val >= cost[currName]) {
+				affordCount++; 
+			}
+		}
+		return (affordCount == currencyCostCount);
+	};
+
+
+	function Upgrade (options) {
+		options = _.extend({
+			id: 			"upgrade-" + RocketBoots.getUniqueId(),
+			name: 			"Upgrade",
+			description: 	"",
+			baseCost: 		{},
+			owned: 			0,
+			costMultiplier: 1.5,
+			labels:			[]
+		}, options);
+
+		_.extend(this, options);
+	};
+
+	Upgrade.prototype.cost = function () {
+		var finalCost = {};
+		var costVal = 0;
+		for (var currName in this.baseCost) {
+			costVal = this.baseCost[currName];
+			finalCost[currName] = (costVal * Math.pow(this.costMultiplier, this.owned));
+		}
+		return finalCost;		
+	};
 
 
 	// Install into RocketBoots if it exists
