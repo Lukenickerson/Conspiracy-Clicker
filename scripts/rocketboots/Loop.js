@@ -46,12 +46,12 @@
 	
 	Loop.prototype.loop = function(){
 		var o = this;
-
-		for (var mai = 0; mai < o.numOfModulusActions; mai++){
+		var mai = o.numOfModulusActions;
+		while (mai--) {
 			if ((o.iteration % o.modulusActions[mai].loopModulus) == 0) {
 				o.modulusActions[mai].loopFunction();
 			}
-		}	
+		}
 		o.fn(o.iteration);
 		o._reloop(o);	
 	};

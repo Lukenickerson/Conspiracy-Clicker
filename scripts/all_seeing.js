@@ -146,14 +146,14 @@ RocketBoots.loadComponents([
 
 	//==== MAIN LOOP
 
-	g.loop.set(function(iteration){
+	g.loop.set(function quickLoop (iteration){
 		g.incrementer.incrementByElapsedTime(undefined, true);
 		g.incrementer.calculate();
-	}, LOOP_DELAY).addActionPerSecond(function(){
+	}, LOOP_DELAY).addActionPerSecond(function halfSecondLoop (){
 		g.calculateAll();
 		g.displayProgress();
 		g.updateUpgradeAfford();
-	}, 0.5).addActionPerSecond(function(){
+	}, 0.5).addActionPerSecond(function slowLoop (){
 		g.autoSaveGame();
 		g.displayLastSaveTime();
 	}, 1);

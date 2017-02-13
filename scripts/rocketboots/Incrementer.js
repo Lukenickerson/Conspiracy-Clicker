@@ -44,18 +44,18 @@
 		return this._increment(time, draw, "incrementByElapsedTime");
 	};
 	Incrementer.prototype._increment = function (arg1, draw, incMethod) {
-		var fn;
+		var incrementDrawFunction;
 		if (draw) {
-			fn = function (curr) { 
+			incrementDrawFunction = function (curr) { 
 				curr[incMethod](arg1);
 				curr.draw();
 			};
 		} else {
-			fn = function (curr) { 
+			incrementDrawFunction = function (curr) { 
 				curr[incMethod](arg1); 
 			};
 		}
-		this.loopOverCurrencies(fn);		
+		this.loopOverCurrencies(incrementDrawFunction);		
 		return this;	
 	};
 
@@ -205,6 +205,7 @@
 			baseCost: 		{},
 			owned: 			0,
 			costMultiplier: 1.5,
+			powerMultiplier: 1.1,
 			labels:			[]
 		}, options);
 
@@ -213,10 +214,17 @@
 
 	Upgrade.prototype.cost = function () {
 		var finalCost = {};
-		var costVal = 0;
+		var base = 1;
+		var power = 1;
 		for (var currName in this.baseCost) {
-			costVal = this.baseCost[currName];
-			finalCost[currName] = (costVal * Math.pow(this.costMultiplier, this.owned));
+			base = this.baseCost[currName];
+			power = this.owned == 1
+			if (this.owned == 1) {
+				power = 0;
+			} else {
+				power = this.owned * this.powerMultiplier;
+			}
+			finalCost[currName] = (base * Math.pow(this.costMultiplier, power));
 		}
 		return finalCost;		
 	};
