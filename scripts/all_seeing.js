@@ -88,7 +88,7 @@ RocketBoots.loadComponents([
 						g.state.transition("intro");
 					}
 				}
-				g.cc.calculateCoreValues();
+				g.calculateAll();
 				g.cc.writeUpgrades();
 				//o.addFlipCardEvents();
 				$('.upgradeList').hide().fadeIn(1000);
@@ -127,7 +127,7 @@ RocketBoots.loadComponents([
 		g.incrementer.incrementByElapsedTime(undefined, true);
 		g.incrementer.calculate();
 	}, LOOP_DELAY).addActionPerSecond(function(){
-		g.cc.calculateCoreValues();
+		g.calculateAll();
 		g.cc.displayProgress();
 		g.cc.updateUpgradeAfford();
 	}, 0.5).addActionPerSecond(function(){
@@ -148,6 +148,8 @@ RocketBoots.loadComponents([
 			selectors: {
 				val: [".industry .money .val"],
 				rate: [".industry .profitPerSecond .val"]
+			}, calcRate: function(c){
+				return g.upgradeRates[this.name] + g.flowRates[this.name];
 			}
 		},{
 			name: "polMoney",
@@ -155,6 +157,8 @@ RocketBoots.loadComponents([
 			selectors: {
 				val: [".politics .money .val"],
 				rate: [".politics .profitPerSecond .val"]
+			}, calcRate: function(c){
+				return g.upgradeRates[this.name] + g.flowRates[this.name];
 			}
 		},{
 			name: "medMoney",
@@ -162,6 +166,8 @@ RocketBoots.loadComponents([
 			selectors: {
 				val: [".media .money .val"],
 				rate: [".media .profitPerSecond .val"]
+			}, calcRate: function(c){
+				return g.upgradeRates[this.name] + g.flowRates[this.name];
 			}
 		},{
 			name: "votes",
@@ -169,6 +175,8 @@ RocketBoots.loadComponents([
 			selectors: {
 				val: [".politics .votes .val"],
 				rate: [".politics .votesPerSecond .val"]
+			}, calcRate: function(c){
+				return g.upgradeRates[this.name] + g.flowRates[this.name];
 			}
 		},{
 			name: "minds",
@@ -176,6 +184,8 @@ RocketBoots.loadComponents([
 			selectors: {
 				val: [".media .minds .val"],
 				rate: [".media .mindsPerSecond .val"]
+			}, calcRate: function(c){
+				return g.upgradeRates[this.name] + g.flowRates[this.name];
 			}
 		},
 		// PER CLICKS
@@ -183,27 +193,58 @@ RocketBoots.loadComponents([
 			name: "indMoneyPerClick",
 			selectors: ".industry .profitPerClick .val",
 			calcVal: function(c){
-				var upgradeCounts = g.cc.getUpgradeCounts();
-				return (1.0 + (upgradeCounts.industry / 5));
+				return (1.0 + (g.upgradeCounts.industry / 5));
 			}
 		},{
 			name: "polMoneyPerClick",
 			selectors: ".politics .profitPerClick .val",
 			calcVal: function(c){
-				var upgradeCounts = g.cc.getUpgradeCounts();
-				return (1.0 + (upgradeCounts.politics / 5));
+				return (1.0 + (g.upgradeCounts.politics / 5));
 			}
 		},{
 			name: "medMoneyPerClick",
 			selectors: ".media .profitPerClick .val",
 			calcVal: function(c){
-				var upgradeCounts = g.cc.getUpgradeCounts();
-				return (1.0 + (upgradeCounts.media / 5));
+				return (1.0 + (g.upgradeCounts.media / 5));
 			}
 		}
 	]);
 
 	g.mainCurrencyNames = ["indMoney", "polMoney", "medMoney", "votes", "minds"];
+
+
+
+	//==== Rate Summations
+
+	g.upgradeRates = {};
+	g.zeroUpgradeRates = function () {
+		g.loopOverCurrencies(function(currName){
+			g.upgradeRates[currName] = 0;
+		});
+	};
+
+	g.upgradeCounts = {};
+	g.zeroUpgradeCounts = function () {
+		g.upgradeCounts = { 
+			"industry" : 0, "politics" : 0, "media" : 0, 
+			"total": 0, 
+			"uniqueOwned": 0,
+			"uniqueTotal": 0,
+		};
+	};
+
+	g.flowRates = {};
+	g.zeroFlowRates = function(){
+		g.loopOverCurrencies(function(currName){
+			g.flowRates[currName] = 0;
+		});
+	};
+
+	g.calculateAll = function () {
+		g.cc.calculateUpgradeCounts();
+		g.cc.calculateFlowRates();
+		g.cc.calculateUpgradeRates();			
+	};
 
 
 	//===== Timing functions
@@ -217,6 +258,21 @@ RocketBoots.loadComponents([
 		$('.lastSavedSeconds').html(this.getSecondsSinceLastSaveTime());
 	};
 
+
+	//==== Control
+
+	g.loopOverSectors = function (callback) {
+		for (var sector in g.cc.owned.upgrades) {
+			callback(sector);
+		}
+	}
+
+	g.loopOverCurrencies = function (callback) {
+		var numOfCurrencies = this.mainCurrencyNames.length;
+		for (var i = 0; i < numOfCurrencies; i++) {
+			callback(this.mainCurrencyNames[i]);
+		}		
+	}
 
 
 	/* === Original Conspiracy Clicker Game === */
@@ -276,7 +332,6 @@ RocketBoots.loadComponents([
 				controlProgress = 0,
 				unlockPercent = 0,
 				combinedPercent = 0;
-			var upgradeCounts = this.getUpgradeCounts();
 
 			if (curr.votes.val > curr.minds.val) {
 				highVal = curr.votes.val;
@@ -296,7 +351,7 @@ RocketBoots.loadComponents([
 				controlProgress = Math.round( controlProgress * 10 ) / 10;
 			}
 
-			unlockPercent =  Math.floor((upgradeCounts.uniqueOwned / upgradeCounts.uniqueTotal) * 100);
+			unlockPercent =  Math.floor((g.upgradeCounts.uniqueOwned / g.upgradeCounts.uniqueTotal) * 100);
 
 			combinedPercent = (controlProgress + unlockPercent) / 2;
 
@@ -443,7 +498,7 @@ RocketBoots.loadComponents([
 		}
 
 		
-		//=============================================== Numbers
+		//=============================================== Clickity Click
 		
 		this.industryClick = function (evt) {
 			g.sounds.play("coin1");
@@ -484,103 +539,80 @@ RocketBoots.loadComponents([
 				$div.remove();
 			});
 		}
+
+		//=============================================== Numbers
 		
-		this.getUpgradeCounts = function () {
-			var upgradeCounts = { 
-				"industry" : 0, "politics" : 0, "media" : 0, 
-				"total": 0, 
-				"uniqueOwned": 0,
-				"uniqueTotal": 0,
-			};
+		this.calculateUpgradeCounts = function () {
+			g.zeroUpgradeCounts();
 			for (var s in this.sectorArray) {
 				var sector = this.sectorArray[s];
 				var sectorUpgrades = this.owned.upgrades[sector];
 				for (var ugi in sectorUpgrades) {
-					upgradeCounts[sector] += sectorUpgrades[ugi];
-					upgradeCounts.total += sectorUpgrades[ugi];
-					upgradeCounts.uniqueTotal += 1;
+					g.upgradeCounts[sector] += sectorUpgrades[ugi];
+					g.upgradeCounts.total += sectorUpgrades[ugi];
+					g.upgradeCounts.uniqueTotal += 1;
 					if (sectorUpgrades[ugi] > 0) {
-						upgradeCounts.uniqueOwned += 1;
+						g.upgradeCounts.uniqueOwned += 1;
 					}
 				}
 			}
-			return upgradeCounts;
+			return g.upgradeCounts;
 		};
-		
-		this.setDefaults = function () {
-			var upgradeCounts = this.getUpgradeCounts();
-			curr.indMoney.setRate(0);
-			curr.polMoney.setRate(0);
-			curr.medMoney.setRate(0);
-			curr.votes.setRate(0);
-			curr.minds.setRate(0);
-			this.flow.baseSpeed = 1.0 + (upgradeCounts.total / 20);
-			return true;
-		}
+
 		
 		this.isFlowing = function () {
 			return (this.flow.from.length > 0 && this.flow.to.length > 0);
 		}
 
-		this.calculateFlowValues = function () {
+		this.calculateFlowRates = function () {
 			var flowSpeed;
+			g.zeroFlowRates();
+			this.flow.baseSpeed = 1.0 + (g.upgradeCounts.total / 20);
 			if (this.isFlowing()) {
 				flowSpeed = this.flow.baseSpeed + (this.flow.percentSpeed * curr[this.flow.from].val);
 				// Make sure the amount flowing from can support it
 				if (curr[this.flow.from].val >= flowSpeed) {
-					curr[this.flow.from].rate -= flowSpeed;
-					curr[this.flow.to].rate += (flowSpeed * this.flow.efficiency);
+					flowRates[this.flow.from] -= flowSpeed;
+					flowRates[this.flow.to] += (flowSpeed * this.flow.efficiency);
 				}
 			}
 		}
 
-		this.calculateCoreValues = function () {
+		this.calculateUpgradeRates = function () {
 			var o = this;
-			this.setDefaults();
+			
+			g.zeroUpgradeRates();
 			
 			// Loop through all upgrades
-			this.loopOverSectors(function(sector){
+			g.loopOverSectors(function(sector){
 				var sectorUpgrades = o.owned.upgrades[sector];
 				for (var ug in sectorUpgrades) {
 					var upgradeQuantity = sectorUpgrades[ug];
 					if (upgradeQuantity > 0) {
 						var upgrade = o.data.upgrades[sector][ug];
 						if (typeof upgrade.perSecond === 'object') {
-							// Loop through all types and see if the upgrade has values
+							// Loop through all and see if the upgrade has values
 							for (var ci in g.mainCurrencyNames) {
 								var currName = g.mainCurrencyNames[ci];
 								if (typeof upgrade.perSecond[currName] === 'number') {
-									curr[currName].rate += (upgradeQuantity * upgrade.perSecond[currName]);
+									g.upgradeRates[currName] += (upgradeQuantity * upgrade.perSecond[currName]);
 								}						
 							}
 						}
+						/*
 						if (typeof upgrade.perClick === 'object') {
 							// Loop through all types and see if the upgrade has values
 							for (var ci in g.mainCurrencyNames) {
 								var currName = g.mainCurrencyNames[ci];
 								if (typeof upgrade.perClick[currName] === 'number') {
-									curr[currName].rate += (upgradeQuantity * upgrade.perClick[currName]);
+									curr[currName + "PerClick"].val += (upgradeQuantity * upgrade.perClick[currName]);
 								}							
 							}					
 						}
+						*/
 					}
 				}
 			});
-
-			this.calculateFlowValues();
-		}
-
-		this.loopOverSectors = function (callback) {
-			for (var sector in this.owned.upgrades) {
-				callback(sector);
-			}
-		}
-
-		this.loopOverCurrencies = function (callback) {
-			var numOfCurrencies = g.mainCurrencyNames.length;
-			for (var i = 0; i < numOfCurrencies; i++) {
-				callback(g.mainCurrencyNames[i]);
-			}		
 		}
 		
 		this.buyUpgrade = function(sector, upgradeIndex, doWriteUpgrades) {
@@ -831,6 +863,8 @@ RocketBoots.loadComponents([
 				g.notifier.error("Cannot launch game.");
 			}
 		}
+
+		//==== Save/Load
 		
 		this.autoSaveGame = function () {
 			if (this.isAutoSaveOn) {
@@ -879,7 +913,7 @@ RocketBoots.loadComponents([
 			var loadedCurrencies = localStorage.getItem("currencies");
 			if (loadedCurrencies !== null) {
 				loadedCurrencies = JSON.parse(loadedCurrencies);
-				o.loopOverCurrencies(function(currName){
+				g.loopOverCurrencies(function(currName){
 					curr[currName].setVal(loadedCurrencies[currName]);
 				});
 				isLoaded = true;
