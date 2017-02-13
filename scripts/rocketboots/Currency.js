@@ -275,16 +275,16 @@
 			if (elementsArray[i] !== null) {
 				switch (valueType) {
 					case "val":
-						html = this.displayValue;
+						html = this.displayValue.toLocaleString();
 						break;
 					case "rate":
 						html = this.getRateString(false);
 						break;
 					case "min":
-						html = this.min; // TODO: more formatting
+						html = this.min.toLocaleString();
 						break;
 					case "max":
-						html = this.max; // TODO: more formatting
+						html = this.max.toLocaleString();
 						break;
 					default:
 						html = "?";
