@@ -680,6 +680,21 @@ footer {
 		font-size: 90%;
 	}
 
+	.options button.on {
+
+	}
+	.options button.on:before {
+		content:  "[\2713] "
+	}
+	.options button.off:before {
+		content:  "[ ] "
+	}
+
+.lastSaved {
+	text-align: center;
+	margin: 1em 0;
+}
+
 /* floating number */
 .click-earn {
 	display: block;
@@ -694,6 +709,14 @@ footer {
 	font-size: 120%;
 	box-shadow: 0 1em 1em rgba(0,0,0,0.2);
 }
+
+/* Notifications */
+
+.notifications {
+	text-align: center;
+}
+
+
 
 
 /* Helpers */
@@ -711,6 +734,20 @@ footer {
 .clearfix {
     *zoom: 1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* === Media Queries for RESPONSIVE === */
 

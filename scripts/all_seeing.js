@@ -3,7 +3,8 @@ RocketBoots.loadComponents([
 	"Loop",
 	"Incrementer",
 	"Dice",
-	"SoundBank"
+	"SoundBank",
+	"Notifier"
 ]).ready(function(rb){
 
 	//==== CONSTANTS
@@ -16,7 +17,7 @@ RocketBoots.loadComponents([
 		// Update certain things once every X iterations
 		// 10 ==> once per second
 		LOOP_MODULUS		= 10,
-		SAVE_EVERY_MS		= 10000 // 10 seconds
+		SAVE_EVERY_SECONDS	= 10 // 10 seconds
 	; 
 
 	//==== GAME, STATES, MAIN LOOP
@@ -28,16 +29,24 @@ RocketBoots.loadComponents([
 			{"loop": "Loop"},
 			{"incrementer": "Incrementer"},
 			{"dice": "Dice"},
-			{"sounds": "SoundBank"}
+			{"sounds": "SoundBank"},
+			{"notifier": "Notifier"}
 		]
 	});
-	g.version = "v1.1.1";
+	g.version = "v1.1.1x";
 	g.cc = new CCGameClass();
 
 	g.state.addStates({
 		"preload": {
 			start: function(){
 				g.sounds.loadSounds(["coin1","coin2","dud1","dud2","save1","transfer1","upgrade1","shock1"]);
+				g.sounds.soundHook = function(isOn){
+					if (isOn) {
+						$('.toggleSound').removeClass("off").addClass("on");
+					} else {
+						$('.toggleSound').removeClass("on").addClass("off");
+					}
+				}
 				// Automatically move on...
 				if (g.cc.loadGame()) {
 					g.state.transition("game");
@@ -84,12 +93,14 @@ RocketBoots.loadComponents([
 				$('.upgradeList').hide().fadeIn(1000);
 				$('.metrics').fadeIn(500);
 				$('.progress').slideDown(200);
+				$('.notifications').show();
 				//$('.threeCols').fadeIn(800, function(){
 					g.loop.start();
 				//});
 				
 			},
 			end: function(){
+				$('.notifications').hide();
 				g.cc.saveGame();
 				g.loop.stop();
 			}
@@ -98,7 +109,13 @@ RocketBoots.loadComponents([
 
 		},
 		"menu": {
-
+			start: function(){
+				$('.notifications').show();
+				g.loop.start();
+			}, stop: function(){
+				$('.notifications').hide();
+				g.loop.stop();
+			}
 		},
 		"win": {
 
@@ -117,11 +134,25 @@ RocketBoots.loadComponents([
 	}, 0.6).addActionPerSecond(function(){
 		g.cc.displayProgress();
 		g.cc.updateUpgradeAfford();
+		g.displayLastSaveTime();
 	}, 1).addActionPerSecond(function(){
 		g.cc.autoSaveGame();
 	}, 2);
 
 	g.cc.setup(); // TODO: move this to state machine
+
+
+	//===== Timing functions
+
+	g.getSecondsSinceLastSaveTime = function () {
+		var now = new Date(); 
+		return Math.round((now - g.cc.lastSaveDateTime) / 1000);
+	};
+
+	g.displayLastSaveTime = function () {
+		$('.lastSavedSeconds').html(this.getSecondsSinceLastSaveTime());
+	};
+
 
 
 	/* === Original Conspiracy Clicker Game === */
@@ -585,7 +616,6 @@ RocketBoots.loadComponents([
 				return true;
 			} else {
 				g.sounds.play("dud");
-				//this.notify("Cannot afford this upgrade.");
 				return false;
 			}
 		}
@@ -624,11 +654,6 @@ RocketBoots.loadComponents([
 		
 		//=============================================== SETUP & LAUNCH
 		
-		this.notify = function (t) {
-			console.warn(t);
-			alert(t);
-		}
-		
 		this.addFlipCardEvents = function ($elt) {
 			console.log("Adding flipcard events");
 			if (typeof $elt === 'undefined') {
@@ -663,7 +688,7 @@ RocketBoots.loadComponents([
 						o.data.groups 	= responseObj.groups;
 						console.log("Ajax Success loading data");
 					} catch (err) {
-						o.notify("ERROR IN JSON DATA");
+						g.notifier.warn("ERROR IN JSON DATA");
 						console.log(responseObj);
 					}
 					// Loop through upgrade data and setup default ownership
@@ -722,6 +747,7 @@ RocketBoots.loadComponents([
 			$('.save').click(function(e){
 				g.sounds.play("save1");
 				o.saveGame(true);
+				//g.notifier.notify('Saved');
 			});
 			$('.load').click(function(e){
 				g.sounds.play("save1");
@@ -737,14 +763,17 @@ RocketBoots.loadComponents([
 				//g.state.transition("intro");
 			});
 			$('.toggleSound').click(function(e){
-				var isOn = g.sounds.toggle();
-				o.notify("Sound turned " + ((isOn) ? "ON" : "OFF"));
+				if (g.sounds.toggle()) {
+					g.sounds.play("dud2");
+				}
 				o.saveGame();
 			});
+			/*
 			$('.toggleAutoSave').click(function(e){
 				o.isAutoSaveOn = !o.isAutoSaveOn;
-				o.notify("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
+				g.notifier.warn("AutoSave turned " + ((o.isAutoSaveOn) ? "ON" : "OFF"));
 			});
+			*/
 			
 			
 			var $arrows = $('.focus .arrow');
@@ -830,14 +859,13 @@ RocketBoots.loadComponents([
 					o.launch(iteration);
 				}, 250);			
 			} else {
-				o.notify("Cannot launch game.");
+				g.notifier.error("Cannot launch game.");
 			}
 		}
 		
 		this.autoSaveGame = function () {
 			if (this.isAutoSaveOn) {
-				var now = new Date();
-				if ((now - this.lastSaveDateTime) > SAVE_EVERY_MS) {
+				if (g.getSecondsSinceLastSaveTime() > SAVE_EVERY_SECONDS) {
 					this.saveGame();
 				}
 			}
@@ -847,19 +875,18 @@ RocketBoots.loadComponents([
 			localStorage.setItem("owned", JSON.stringify(this.owned));
 			localStorage.setItem("total", JSON.stringify(this.total));
 			localStorage.setItem("isSoundOn", JSON.stringify(g.sounds.isSoundOn));
-			
+			localStorage.setItem("version", g.version);
+
 			this.lastSaveDateTime = new Date();
-			
-			if (typeof showNotice === 'boolean') { 
-				if (showNotice) this.notify("Game has been saved to this browser. Your game will be automatically loaded when you return.");
-			}
+			g.displayLastSaveTime();
 			console.log("Game saved.");
 		}
 		
 		this.deleteGame = function() {
 			localStorage.removeItem("owned");
 			localStorage.removeItem("total");
-			this.notify("Saved game deleted!");
+			localStorage.removeItem("version");
+			g.notifier.warn("Saved game deleted!");
 			// TODO: Make a way to delete/restart without reloading the page
 			window.location.reload(true); 
 		}	
@@ -883,6 +910,12 @@ RocketBoots.loadComponents([
 			if (loadedSound !== null) {
 				g.sounds.toggle( (JSON.parse(loadedSound) ? true : false) );
 			}
+			var version = localStorage.getItem("version");
+			if (version !== g.version) {
+				g.notifier.warn("Loaded a saved game that was saved with a different game version than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game.");
+			}
+
+
 			return isLoaded;
 		}
 		

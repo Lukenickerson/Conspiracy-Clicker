@@ -4,25 +4,25 @@
 		classNames:		["SoundBank"],
 		requirements:	[],
 		description:	"Sound loader/player; formerly SoundCannon",
-		credits:		"By Luke Nickerson, 2014-2015"
+		credits:		"By Luke Nickerson, 2014-2017"
 	};
 	
 	var sc = component.SoundBank = function() {
 		this.sounds = {};
 		this.isSoundOn = true;
 		this.isMusicOn = true;
-		this.callback = function(){}; // Needed? rename to "hook"?
-		this.musicCallback = function(){};
+		this.soundHook = function(){}; 
+		this.musicHook = function(){};
 	};
 	sc.prototype._set = function(bool){
 		if (!bool) this._setMusic(false);
 		this.isSoundOn = bool;
-		this.callback(bool);
+		this.soundHook(bool);
 	};
 	sc.prototype._setMusic = function(bool){
 		if (bool) this._set(true);
 		this.isMusicOn = bool;
-		this.musicCallback(bool);
+		this.musicHook(bool);
 	};
 	sc.prototype.on = function() {
 		this._set(true);
