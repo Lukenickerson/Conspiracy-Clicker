@@ -183,6 +183,7 @@ section.progress {
 	position: relative;
 	text-align: center;
 	margin: 0 auto;
+	max-width: 100em;
 }
 	.mindControlPercent, 
 	.upgradeUnlockedPercent {
@@ -229,6 +230,8 @@ section.progress {
 	display: none;
 	width: 100%;
 	min-height: 10em;
+	max-width: 100em;
+	margin: 0 auto;
 	/* overflow: auto; */
 }
 
