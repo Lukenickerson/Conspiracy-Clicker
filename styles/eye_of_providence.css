@@ -15,8 +15,8 @@ body {
 	/* border: solid 1em rgba(0,0,0,0.5); */
 	/* box-shadow: inset 0 0 5em red; */
 	background-color: #bbb;
-	background: -webkit-linear-gradient(top, #bbb, #201616) fixed;
-	background: linear-gradient(top, #bbb, #201616) fixed;
+	background: -webkit-linear-gradient(top, #cccccf, #403838) fixed;
+	background: linear-gradient(top, #cccccf, #403838) fixed;
 	background-attachment: fixed;
 	overflow: auto;
 	font-family: 'Sanchez', 'Oxygen', sans-serif;
@@ -190,7 +190,7 @@ section.progress {
 		position: absolute;
 		top: 0;
 		font-family: 'Sanchez', 'Permanent Marker', cursive;
-		color: rgba(0,0,0,0.5);
+		color: rgba(0,0,0,0.9);
 		font-size: 0.8em;
 		line-height: 2em;
 		z-index: 2;
@@ -492,7 +492,7 @@ section.progress {
 
 	/* FRONT */
 	.upgrade .front {
-		background: rgba(0,0,0,0.5);
+		background: rgba(0,0,0,0.4);
 		padding: 1em;
 	}
 	.upgrade .name {
@@ -506,7 +506,7 @@ section.progress {
 		float: left;
 		font-size: 2em;
 		min-width: 10%;
-		color: rgba(0,0,0,0.5);
+		color: rgba(0,0,0,0.75);
 	}
 	.upgrade button.buy {
 		/* position: absolute;
@@ -556,7 +556,7 @@ section.progress {
 		opacity: 0.5;
 	}
 	.upgrade.notOwned.afford {
-		opacity: 0.9;
+		opacity: 1.0;
 	}
 	.upgrade.notOwned.cannotAfford .front {
 		background: rgba(0,0,0,0.25);
