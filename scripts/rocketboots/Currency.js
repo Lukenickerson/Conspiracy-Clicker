@@ -8,28 +8,28 @@
 	};
 
 	var Currency = component.Currency = function CurrencyClass (options){
-		options 		= options || {};
-		this.name 		= (options.name || options.elementId || "Currency_" + Math.round(Math.random() * 9999999));
-		this.displayName = (options.displayName || this.name);
-		this.symbol 	= (options.symbol || "");
-		this.symbolBefore = true;
-		//this.showRate	= (typeof options.showRate === "boolean") ? options.showRate : true;
-		//this.showMax	= (typeof options.showMax === "boolean") ? options.showMax : false;
-		this.rate 		= getDefaultNumber(options.rate, 0); // Increase per step
-		this.min 		= getDefaultNumber(options.min, 0);
-		this.max 		= getDefaultNumber(options.max, 1000000000000000); // 1 quadrillion default (max safe value is 9,007,199,254,740,991)
-		this.val 		= getDefaultNumber(options.val, this.min);
-		this.floor 		= Math.floor(this.val);
+		options 			= options || {};
+		this.name 			= (options.name || options.elementId || "Currency_" + Math.round(Math.random() * 9999999));
+		this.displayName 	= (options.displayName || this.name);
+		this.symbol 		= (options.symbol || "");
+		this.symbolBefore 	= true;
+		//this.showRate		= (typeof options.showRate === "boolean") ? options.showRate : true;
+		//this.showMax		= (typeof options.showMax === "boolean") ? options.showMax : false;
+		this.rate 			= getDefaultNumber(options.rate, 0); // Increase per step
+		this.min 			= getDefaultNumber(options.min, 0);
+		this.max 			= getDefaultNumber(options.max, 1000000000000000); // 1 quadrillion default (max safe value is 9,007,199,254,740,991)
+		this.val 			= getDefaultNumber(options.val, this.min);
+		this.floor 			= Math.floor(this.val);
 		this.stepsPerSecond = getDefaultNumber(options.stepsPerSecond, 1);
-		this.lastUpdated = new Date();
+		this.lastUpdated 	= new Date();
 		this.mathMethodForDisplay	= (options.mathMethodForDisplay || "floor");
-		this.tip 		= (typeof options.tip === "string") ? options.tip : "";
+		this.tip 			= (typeof options.tip === "string") ? options.tip : "";
 
 		// TODO: check that the value will never go over this... if so, go back
 		// to zero and keep track of the number of overflows so we can handle 
 		// very large numbers
-		this._maxSafe 	= Number.MAX_SAFE_INTEGER;
-		this.overflowCount = 0;
+		this._maxSafe 		= Number.MAX_SAFE_INTEGER;
+		this.overflowCount 	= 0;
 
 		//this.hasCalculations = (options.calcRate || options.calcValue || options.calcMax) ? true : false;
 		this.calcRate 	= (options.calcRate || undefined);
@@ -217,10 +217,11 @@
 			}
 		}
 		return Math[mathMethod](n * div)/div;
-	}
+	};
+
 	function _getDisplayValueString (n, mathMethod, div) {
 		return _getDisplayValue(n, mathMethod, div).toLocaleString();
-	}
+	};
 
 	// Get strings for writing
 	Currency.prototype.getRateString = function (includePlus) {
@@ -267,6 +268,7 @@
 		this.element.setAttribute("title", this.displayName + ": " + text);
 		return true;
 	};
+
 	Currency.prototype.drawValue = function (valueType) {
 		var elementsArray = this.elements[valueType];
 		var i = elementsArray.length;
