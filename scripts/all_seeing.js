@@ -21,7 +21,7 @@ RocketBoots.loadComponents([
 			{"notifier": "Notifier"},
 			{"storage": "Storage"}
 		],
-		version: "v1.3.0"
+		version: "v1.3.1"
 	});
 	var curr = g.currencies = g.incrementer.currencies;
 

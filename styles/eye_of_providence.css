@@ -1,3 +1,20 @@
+/* ==== Fonts ==== */
+
+@font-face{ 
+	font-family: 'Oxygen Mono';
+	src: url('fonts/Oxygen_Mono/OxygenMono-Regular.ttf') format('truetype');
+}
+@font-face{ 
+	font-family: 'Sanchez';
+	src: url('fonts/Sanchez/Sanchez-Regular.ttf') format('truetype');
+}
+@font-face{ 
+	font-family: 'Permanent Marker';
+	src: url('fonts/Permanent_Marker/PermanentMarker.ttf') format('truetype');
+}
+
+/* ==== Body, Basics ==== */
+
 html {
 	min-height: 100%;
     margin: 0;
