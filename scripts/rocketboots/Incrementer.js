@@ -249,11 +249,11 @@
 		for (var currName in this.baseCost) {
 			base = this.baseCost[currName];
 			power = this.owned == 1
-			if (this.owned == 1) {
-				power = 0;
-			} else {
+			//if (this.owned == 1) {
+			//	power = 0;
+			//} else {
 				power = this.owned * this.costPowerMultiplier;
-			}
+			//}
 			finalCost[currName] = (base * Math.pow(this.costMultiplier, power));
 			if (finalCost[currName] > 1000000000)  {
 				roundBy = 100000000;

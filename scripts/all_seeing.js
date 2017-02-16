@@ -23,7 +23,7 @@ RocketBoots.loadComponents([
 			{"storage": "Storage"},
 			{"walkthrough": "Walkthrough"}
 		],
-		version: "v1.3.1"
+		version: "v1.3.2"
 	});
 	var curr = g.currencies = g.incrementer.currencies;
 
@@ -468,7 +468,7 @@ RocketBoots.loadComponents([
 			},
 			"version": function(data) {
 				if (data !== g.version) {
-					g.notifier.warn("Loaded a saved game that was saved with a different game version (" + data + ") than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game.");
+					g.notifier.warn("Loaded a saved game that was saved with a different game version (" + data + ") than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game from the menu.");
 				}			
 			}
 		});
