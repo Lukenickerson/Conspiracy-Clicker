@@ -1,0 +1,43 @@
+.tip {
+	display: none;
+	position: absolute;
+	padding: 2em;
+	background-color: #ffe;
+	font-size: 1em;
+	box-shadow: 0 2em 2.1em rgba(0,0,0,0.25); /* , inset 0 0 0.5em rgba(0,0,0,0.1); */
+	max-width: 20em;
+	min-width: 5em;
+	z-index: 11;
+	opacity: 1;
+	border-radius: 0.1em;
+	border: solid 0.2em transparent;
+	transition: all 0.25s ease-in-out;
+}
+
+.tip p {
+	margin-top: 0;
+}
+.tip button {
+	display: block;
+	margin: 1em 0;
+	width: 100%;
+	font-size: 100%;
+	padding: 0.5em 1em;
+	background-color: rgba(0,0,0,0.2);
+	cursor: pointer;
+	border-radius: 0.4em;
+	border: none;
+	transition: all 0.5s ease-in-out;
+}
+	.tip button:hover {
+		background-color: rgba(0,0,0,0.25);
+	}
+
+.tip-target {
+	border: solid 2px white;
+}
+
+.tip-closed {
+	opacity: 0;
+	font-size: 0.25em;
+}

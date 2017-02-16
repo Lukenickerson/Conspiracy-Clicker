@@ -5,7 +5,8 @@ RocketBoots.loadComponents([
 	"Dice",
 	"SoundBank",
 	"Notifier",
-	"Storage"
+	"Storage",
+	"Walkthrough"
 ]).ready(function(rb){
 
 	//==== GAME
@@ -19,7 +20,8 @@ RocketBoots.loadComponents([
 			{"dice": "Dice"},
 			{"sounds": "SoundBank"},
 			{"notifier": "Notifier"},
-			{"storage": "Storage"}
+			{"storage": "Storage"},
+			{"walkthrough": "Walkthrough"}
 		],
 		version: "v1.3.1"
 	});
@@ -72,6 +74,7 @@ RocketBoots.loadComponents([
 						$('.toggleSound').removeClass("on").addClass("off");
 					}
 				}
+				g.walkthrough.setup();
 				// Automatically move on...
 				if (g.loadGame()) {
 					g.state.transition("game");
@@ -119,10 +122,12 @@ RocketBoots.loadComponents([
 				$('.metrics').fadeIn(500);
 				$('.progress').slideDown(200);
 				$('.notifications').show();
+				g.walkthrough.show();
 				g.loop.start();				
 			},
 			end: function(){
 				$('.notifications').hide();
+				g.walkthrough.hide();
 				g.saveGame();
 				g.loop.stop();
 			}
@@ -134,9 +139,10 @@ RocketBoots.loadComponents([
 			start: function(){
 				$('.notifications').show();
 				g.loop.start();
-			}, stop: function(){
+			}, end: function(){
 				$('.notifications').hide();
 				g.loop.stop();
+				g.saveGame();
 			}
 		},
 		"win": {
@@ -238,11 +244,11 @@ RocketBoots.loadComponents([
 
 	g.importUpgradeData = function (rawUpgrades) {
 		g.loopOverSectors(function(sector){
-			console.log(sector, "------------------");
+			//console.log(sector, "------------------");
 			g.incrementer.addUpgrades(rawUpgrades[sector]);
 			g.incrementer.loopOverUpgrades(sector, function(upgrade, i){
 				upgrade.calculateBaseCost((i + 1));
-				console.log(upgrade.outputValue, upgrade.name, upgrade.outputValue / (i+1));
+				//console.log(upgrade.outputValue, upgrade.name, upgrade.outputValue / (i+1));
 			});
 		});
 	};
@@ -426,6 +432,7 @@ RocketBoots.loadComponents([
 				minds: curr.minds.val,
 			},
 			"isSoundOn": g.sounds.isSoundOn,
+			"walkthroughProgress": g.walkthrough.progress,
 			"version": g.version
 		});
 
@@ -435,14 +442,15 @@ RocketBoots.loadComponents([
 	}
 	
 	g.deleteGame = function() {
-		g.storage.remove(["upgrades", "currencies", "version"]);
+		g.storage.remove(["upgrades", "currencies", "walkthroughProgress", "version"]);
 		g.notifier.warn("Saved game deleted!");
 		// TODO: Make a way to delete/restart without reloading the page
 		window.location.reload(true); 
 	}	
 	
 	g.loadGame = function () {
-		var EXPECTED_KEYS = 4;
+		var EXPECTED_KEYS = 5;
+		var isFullyLoaded = false;
 		var loaded = g.storage.load({
 			"upgrades": function(data) {
 				g.incrementer.importUpgradeOwnership(data);
@@ -455,13 +463,22 @@ RocketBoots.loadComponents([
 			"isSoundOn": function(data) {
 				g.sounds.toggle(data);
 			},
+			"walkthroughProgress": function(data) {
+				g.walkthrough.progress = data;
+			},
 			"version": function(data) {
 				if (data !== g.version) {
 					g.notifier.warn("Loaded a saved game that was saved with a different game version (" + data + ") than the current (" + g.version + "). This could result in game errors. If so you may want to start a new game.");
 				}			
 			}
 		});
-		return (loaded.length === EXPECTED_KEYS) ? true : false;
+		isFullyLoaded = (loaded.length === EXPECTED_KEYS);
+		/*
+		if (!isFullyLoaded) {
+			g.notifier.warn("Could not fully load the game.");
+		}
+		*/
+		return isFullyLoaded;
 	}
 
 	
@@ -750,6 +767,11 @@ RocketBoots.loadComponents([
 			}
 			g.saveGame();
 		});
+		$('.resetTips').click(function(e){
+			console.log("Resetting tips");
+			g.walkthrough.reset();
+			g.state.transition("game");
+		});
 		/*
 		$('.toggleAutoSave').click(function(e){
 			o.isAutoSaveOn = !o.isAutoSaveOn;
@@ -826,10 +848,10 @@ RocketBoots.loadComponents([
 				g.importUpgradeData(responseObj.upgrades);
 			}
 			,failure: function(msg) {
-				console.log("Fail\n"+ msg);
+				g.notifier.error("Fail\n"+ msg);
 			}
 			,error: function(x, textStatus, errorThrown) {
-				console.log("Error\n" + x.responseText + "\nText Status: " + textStatus + "\nError Thrown: " + errorThrown);
+				g.notifier.error("Error\n" + x.responseText + "\nText Status: " + textStatus + "\nError Thrown: " + errorThrown);
 			}
 		});
 

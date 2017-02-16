@@ -5,6 +5,7 @@
 	<title>Conspiracy Clicker by Deathray Games</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<link rel="stylesheet" href="styles/notifier.css" />
+	<link rel="stylesheet" href="styles/walkthrough.css" />
 	<link rel="stylesheet" href="styles/eye_of_providence.css" />
 	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
@@ -75,43 +76,7 @@
 			Fortunately the political realm and the media are already easily subjugated 
 			by money; if we are patient with our conspiratorial schemes, we cannot fail.
 		</p>
-		<button type="button" class="goto" data-state="walkthru">Continue...</button>
-	</section>
-	
-	<section class="state walkthru">
-		<p>
-			This game is made up of three different sectors - Industry, Politics, Media - 
-			and three different currencies: money, votes, and controlled minds.
-			Each sector has it's own funds and it's own specialty. 
-			Industry's primarily job is generating money; Politics can generate votes or money;
-			Media can generate controlled minds or money.
-		</p>
-		<p>
-			To play this game, you will utilize three main features:
-		</p>
-		<ol>
-			<li><strong>Click Sector Icon</strong> - Every click will generate money. The 
-				more upgrades you have, the more money you'll generate with each click.
-			</li>
-			<li><strong>Purchase Upgrades</strong> - These are listed below each sector icon; 
-				click the button to purchase one upgrade (if you have the funds), or click the
-				upgrade to see more details. Some upgrades in a sector will aid another sector.
-			</li>
-			<li><strong>Transfers</strong> - Currencies can be transferred between sectors
-				by activating one of the arrows/buttons connecting the three sector icons.
-				Only one transfer can be active at a time. Financing and contributions move money, 
-				tax breaks turn votes into money, propaganda turns mind control into votes,
-				and ads turn mind control into money for industry. Campaigns use money to create
-				votes, while a mass broadcast will convert money into mind control.
-				
-			</li>
-		</ol>
-		<p>
-			In order to win, you need to have millions of voters and minds 
-			secure under your control. your progress can be measured with the progress bar at
-			the top (it takes a while for you to even register on it!).
-		</p>
-		<button type="button" class="goto" data-state="game">Begin your Conspiracy...</button>
+		<button type="button" class="goto" data-state="game">Continue...</button>
 	</section>
 	
 	<section class="notifications">
@@ -259,6 +224,34 @@
 		</section>
 	</div>
 
+	<section class="tips">
+		<div class="tip tip1">
+			<p>This game is made up of three different sectors - Industry, Politics, Media - 
+			and three different currencies: money, votes, and controlled minds.
+			</p>
+			<p>
+			Each sector has it's own funds and it's own specialty. 
+			Industry's primarily job is generating money; Politics can generate votes or money;
+			Media can generate controlled minds or money.
+			</p>
+		</div>
+		<div class="tip tip2" data-near=".clicker">
+			To play this game you will utilize three main features: Clicking, Buying upgrades, and Transfers.
+			Click one of the sector icons to generate money.
+		</div>
+		<div class="tip tip3" data-near=".front">
+			Once you have enough money, buy an upgrade by clicking the button. Upgrades automatically generate money, gather votes, or control minds.
+		</div>
+		<div class="tip tip4" data-near=".arrow.rightOut">
+			Try transferring money between sectors, or transferring money to votes or minds.
+		</div>
+		<div class="tip tip5" data-near=".progressBar">
+			To win you will need to unlock all upgrades and get billions of votes and minds.
+			Your progress will be shown on this bar. 
+			Good luck taking over the world!
+		</div>
+	</section>
+
 	<div class="state win">
 		<p class="congrats">
 			Congratulations, our conspiracy has dominated the world!
@@ -273,6 +266,7 @@
 		<div class="options">
 			<button type="button" class="goto" data-state="game">Return to Game</button>
 			<button type="button" class="toggleSound">Toggle Sound</button>
+			<button type="button" class="resetTips">Review Tips</button>
 			<button type="button" class="goto" data-state="intro">Review Intro</button>
 			<div class="lastSaved">Last saved <span class="lastSavedSeconds">...</span> seconds ago</div>
 			<!-- <button type="button" class="toggleAutoSave">Toggle AutoSave</button> -->
@@ -311,7 +305,41 @@
 			<p>
 				&copy; 2014-2017
 			</p>
-		</div>	
+		</div>
+		<div>
+			<h2>Instructions</h2>
+			<p>
+				This game is made up of three different sectors - Industry, Politics, Media - 
+				and three different currencies: money, votes, and controlled minds.
+				Each sector has it's own funds and it's own specialty. 
+				Industry's primarily job is generating money; Politics can generate votes or money;
+				Media can generate controlled minds or money.
+			</p>
+			<p>
+				To play this game, you will utilize three main features:
+			</p>
+			<ol>
+				<li><strong>Click Sector Icon</strong> - Every click will generate money. The 
+					more upgrades you have, the more money you'll generate with each click.
+				</li>
+				<li><strong>Purchase Upgrades</strong> - These are listed below each sector icon; 
+					click the button to purchase one upgrade (if you have the funds), or click the
+					upgrade to see more details. Some upgrades in a sector will aid another sector.
+				</li>
+				<li><strong>Transfers</strong> - Currencies can be transferred between sectors
+					by activating one of the arrows/buttons connecting the three sector icons.
+					Only one transfer can be active at a time. Financing and contributions move money, 
+					tax breaks turn votes into money, propaganda turns mind control into votes,
+					and ads turn mind control into money for industry. Campaigns use money to create
+					votes, while a mass broadcast will convert money into mind control.	
+				</li>
+			</ol>
+			<p>
+				In order to win, you need to have billions of voters and minds 
+				secure under your control. your progress can be measured with the progress bar at
+				the top.
+			</p>
+		</div>
 	</div>
 	
 	<div class="scripts">
