@@ -199,32 +199,78 @@
 
 	function Upgrade (options) {
 		options = _.extend({
-			id: 			"upgrade-" + RocketBoots.getUniqueId(),
-			name: 			"Upgrade",
-			description: 	"",
-			baseCost: 		{},
-			owned: 			0,
-			costMultiplier: 1.5,
-			powerMultiplier: 1.1,
-			labels:			[]
+			id: 					"upgrade-" + RocketBoots.getUniqueId(),
+			name: 					"Upgrade",
+			description: 			"",
+			costCurrencyName: 		"",
+			baseCost: 				{},
+			owned: 					0,
+			output:  				{},
+			costMultiplier: 		1.5,
+			costPowerMultiplier: 	1.1,
+			outputValue: 			null,
+			outputValueMultiplier: 	1,
+			labels:					[]
 		}, options);
 
 		_.extend(this, options);
 	};
 
+	// This assumes that all currencies have an equal value 1-to-1
+	Upgrade.prototype.getOutputValue = function () {
+		var ov = 0;
+		for (var currName in this.output) {
+			ov += this.output[currName];
+		}
+		return ov;
+	};
+
+	Upgrade.prototype.calculateOutputValue = function () {
+		this.outputValue = this.getOutputValue() * this.outputValueMultiplier;
+		return this.outputValue;
+	};
+
+	// The base cost is the cost for the first unit of upgrade
+	Upgrade.prototype.calculateBaseCost = function (n) {
+		var costPerOutput = (100 * (n-1) + Math.pow(15, 1+(n*0.12)));
+		costPerOutput = Math.round(costPerOutput/10) * 10; // round to nearest ten
+		this.calculateOutputValue();
+		this.baseCost = {};
+		this.baseCost[this.costCurrencyName] = costPerOutput * this.outputValue;
+		return this.baseCost;
+	};
+
+	// "cost" is the cost for the next unit of upgrade (costs go up exponentially)
 	Upgrade.prototype.cost = function () {
 		var finalCost = {};
 		var base = 1;
 		var power = 1;
+		var roundBy = 10;
 		for (var currName in this.baseCost) {
 			base = this.baseCost[currName];
 			power = this.owned == 1
 			if (this.owned == 1) {
 				power = 0;
 			} else {
-				power = this.owned * this.powerMultiplier;
+				power = this.owned * this.costPowerMultiplier;
 			}
 			finalCost[currName] = (base * Math.pow(this.costMultiplier, power));
+			if (finalCost[currName] > 1000000000)  {
+				roundBy = 100000000;
+			} else if (finalCost[currName] > 100000000)  {
+				roundBy = 10000000;
+			} else if (finalCost[currName] > 10000000)  {
+				roundBy = 1000000;
+			} else if (finalCost[currName] > 1000000)  {
+				roundBy = 100000;
+			} else if (finalCost[currName] > 100000)  {
+				roundBy = 10000;
+			} else if (finalCost[currName] > 10000) {
+				roundBy = 1000;
+			} else if (finalCost[currName] > 1000) {
+				roundBy = 100;
+			}
+			finalCost[currName] = Math.round(finalCost[currName] / roundBy) * roundBy;
 		}
 		return finalCost;		
 	};

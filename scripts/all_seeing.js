@@ -21,7 +21,7 @@ RocketBoots.loadComponents([
 			{"notifier": "Notifier"},
 			{"storage": "Storage"}
 		],
-		version: "v1.2.0"
+		version: "v1.3-beta1"
 	});
 	var curr = g.currencies = g.incrementer.currencies;
 
@@ -36,7 +36,7 @@ RocketBoots.loadComponents([
 		// 10 ==> once per second
 		LOOP_MODULUS		= 10,
 		SAVE_EVERY_SECONDS	= 10, // 10 seconds
-		TOTAL_POPULATION 	= 314000000,
+		TOTAL_POPULATION 	= 7000000000; // US =314000000,
 		SHORT_CURRENCY_SYMBOLS = {
 			"indMoney" 		: "$"
 			,"polMoney" 	: "$"
@@ -51,7 +51,7 @@ RocketBoots.loadComponents([
 			,"votes"		: "votes"
 			,"minds"		: "minds"
 		},
-		SHOW_LAST_UPGRADES = 3
+		SHOW_LAST_UPGRADES = 300
 	; 
 
 	// Other variables
@@ -238,7 +238,12 @@ RocketBoots.loadComponents([
 
 	g.importUpgradeData = function (rawUpgrades) {
 		g.loopOverSectors(function(sector){
+			console.log(sector, "------------------");
 			g.incrementer.addUpgrades(rawUpgrades[sector]);
+			g.incrementer.loopOverUpgrades(sector, function(upgrade, i){
+				upgrade.calculateBaseCost((i + 1));
+				console.log(upgrade.outputValue, upgrade.name, upgrade.outputValue / (i+1));
+			});
 		});
 	};
 
@@ -311,12 +316,12 @@ RocketBoots.loadComponents([
 		g.loopOverSectors(function(sector){
 			g.incrementer.loopOverUpgrades(sector, function(upgrade){		
 				if (upgrade.owned > 0) {
-					if (typeof upgrade.perSecond === 'object') {
+					if (typeof upgrade.output === 'object') {
 						// Loop through all and see if the upgrade has values
 						for (var ci in g.mainCurrencyNames) {
 							var currName = g.mainCurrencyNames[ci];
-							if (typeof upgrade.perSecond[currName] === 'number') {
-								g.upgradeRates[currName] += (upgrade.owned * upgrade.perSecond[currName]);
+							if (typeof upgrade.output[currName] === 'number') {
+								g.upgradeRates[currName] += (upgrade.owned * upgrade.output[currName]);
 							}
 						}
 					}
@@ -478,10 +483,11 @@ RocketBoots.loadComponents([
 			lowVal = curr.votes.val;		
 		}
 		totalControlled = highVal + (lowVal/2);
-		if (totalControlled > TOTAL_POPULATION) {
-			totalControlled = TOTAL_POPULATION;
-		}
+
 		controlProgress = (totalControlled / TOTAL_POPULATION) * 100;
+		if (controlProgress > 100) {
+			controlProgress = 100;
+		}
 		if (controlProgress < 0) {
 			controlProgress = Math.round( controlProgress * 100000 ) / 100000;
 		} else {
@@ -508,16 +514,20 @@ RocketBoots.loadComponents([
 		}
 	}
 	
-	g.displayNumber = function (n, $elt) {
-		//console.log($elt);
-		$elt.html(this.getDisplayNumber(n));
-	}
-	
-	g.getDisplayNumber = function(n , addK) {
+	g.getDisplayNumber = function(n , abbreviate) {
+		abbreviate = (abbreviate) ? true : false;
 		if (n < 10) {
-			n = Math.round( n * 10 ) / 10;
-		} else if (n > 99999 && typeof addK === 'boolean' && addK) {
-			n = Math.round(n / 1000);
+			n = ( n * 10 ) / 10;
+		} else if (n > 999999999 && abbreviate) {
+			n = (n / 1000000000);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+			n += "B";
+		} else if (n > 999999 && abbreviate) {
+			n = (n / 1000000);
+			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
+			n += "M";			
+		} else if (n > 9999 && abbreviate) {
+			n = (n / 1000);
 			n = this.getCommaSeparatedNumber(n); //n = n.toLocaleString('en');
 			n += "k";
 		} else {
@@ -566,7 +576,7 @@ RocketBoots.loadComponents([
 				+ '<button type="button" class="buy"><div class="buyText">Buy</div>'
 			;
 			for (var currName in cost) {
-				h += '<div class="cost val">'
+				h += '<div class="cost val" title="Buy for ' + o.getDisplayNumber(cost[currName]) + ' ' + SHORT_CURRENCY_SYMBOLS[currName] + '">'
 					+ o.getDisplayNumber(cost[currName], true)
 					+ ' ' + SHORT_CURRENCY_SYMBOLS[currName]
 					+ '</div>'
@@ -582,12 +592,12 @@ RocketBoots.loadComponents([
 			if (typeof upgrade.description === 'string') {
 				h += '<div class="details">' + upgrade.description + '</div>';
 			}
-			if (typeof upgrade.perSecond === 'object') {
+			if (typeof upgrade.output === 'object') {
 				h += '<ul class="">';
-				for (var currName in upgrade.perSecond) {
+				for (var currName in upgrade.output) {
 					h += '<li>' 
-						+ ((upgrade.perSecond[currName] > 0) ? "+" : "")
-						+ o.getDisplayNumber(upgrade.perSecond[currName])
+						+ ((upgrade.output[currName] > 0) ? "+" : "")
+						+ o.getDisplayNumber(upgrade.output[currName])
 						+ ' ' + LONG_CURRENCY_SYMBOLS[currName]
 						+ '/sec'
 						+ '</li>'

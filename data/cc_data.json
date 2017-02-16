@@ -8,145 +8,149 @@
 			{
 				"name" 				: "Lemonade Sweatshop"
 				,"costMultiplier" 	: 1.3
-				,"baseCost" 		: {	"indMoney" : 20 }
-				,"perSecond" 		: {	"indMoney" : 1 }
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 1 }
 				,"description"		: "Children are easily tricked into working for free. Put them to work selling lemon-flavored sugar water."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Towing Garages"
 				,"costMultiplier" 	: 1.4
-				,"baseCost" 		: {	"indMoney" : 120 }
-				,"perSecond" 		: {	"indMoney" : 2 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 2 }
+				,"description"		: "We don't really care where you were parked. If you want your car back, you can either pay us or climb the razor-wire fence."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Quik-e-Gunz 'n' Beer"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 720 }
-				,"perSecond" 		: {	"indMoney" : 6 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 6 }
+				,"description"		: "These small shops sell everything you might need to keep you satiated, intoxicated, and dangerous."			
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Shark Law Firm"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 2400 }
-				,"perSecond" 		: {	"indMoney" : 20 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 20 }
+				,"description"		: "They love the smell of blood, almost as much as the smell of money."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Media Shell Corporation"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 3600 }
-				,"perSecond" 		: {	"medMoney" : 20, "indMoney" : 10 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"medMoney" : 20, "indMoney" : 10 }
+				,"description"		: "Owning a media corporation makes sure that pesky issues like worker rights and pollution never become news stories."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Ducttape Healthcare"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 13000 }
-				,"perSecond" 		: {	"indMoney" : 100 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 100 }
+				,"description"		: "If we fixed the underlying problem we would lose all our customers. Free bankruptcy support after each visit."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Build-a-Burger Group"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 48000 }
-				,"perSecond" 		: {	"indMoney" : 400 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 400 }
+				,"description"		: "This shadowy, private conference of the industrial, business, and political elite is also the owner of a fast food chain."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "GMO Super-Sloth Super-Food"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 120000 }
-				,"perSecond" 		: {	"indMoney" : 600, "minds" : 100, "votes" : 100 }
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 600, "minds" : 100, "votes" : 100 }
 				,"description"		: "Food so large you'll be forever full and bloated."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "HapChem Pharmaceuticals"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 180000 }
-				,"perSecond" 		: {	"indMoney" : 600, "minds" : 500, "votes" : 100 }
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 600, "minds" : 500, "votes" : 100 }
 				,"description"		: "Happy life is happy. Happy time. Take your pill. Happy."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Megaton Mining"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 250000 }
-				,"perSecond" 		: {	"indMoney" : 1600 }
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 1600 }
 				,"description"		: "Prepare the bombs, it is time to delve too greedily and too deep!"
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Elder Bank"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 500000 }
-				,"perSecond" 		: {	"indMoney" : 2500, "medMoney" : 500 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 2500, "medMoney" : 500 }
+				,"description"		: "This bank has controlled the financial sector since the dawn of civilization, and will continue forever."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Dark Skies Lobbying Group"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 600000 }
-				,"perSecond" 		: {	"indMoney" : 2000, "polMoney" : 1000, "votes" : 1000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 2000, "polMoney" : 1000, "votes" : 1000 }
+				,"description"		: "How would politicians know what vote for unless they are told by the titans of industry in shadowy back-room meetings?"			
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "Super PAC"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 700000 }
-				,"perSecond" 		: {	"polMoney" : 3500, "medMoney" : 500, "votes" : 500 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"polMoney" : 3500, "medMoney" : 500, "votes" : 500 }
+				,"description"		: "These political action committees pour money into politics, shaping all the public debates."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Covert Trading Council"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 900000 }
-				,"perSecond" 		: {	"indMoney" : 1000, "medMoney" : 2500, "polMoney" : 2500 }
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 1000, "medMoney" : 2500, "polMoney" : 2500 }
 				,"description"		: "This government-sanctioned council meets in secret to shift funds to wherever they are needed."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Pantheon Drone Defense Corp."
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 10000000 }
-				,"perSecond" 		: {	"indMoney" : 50000, "votes" : 2000, "polMoney" : 2000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 50000, "votes" : 2000, "polMoney" : 2000 }
+				,"description"		: "Makers of Apex-Predator drones that excel at killing other drones."
 				,"labels"			: ["industry"]
-			}
-			,{
+			},{
 				"name" 				: "International Reserve"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 40000000 }
-				,"perSecond" 		: {	"indMoney" : 140000, "medMoney" : 20000, "polMoney" : 20000, "votes" : 20000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 140000, "medMoney" : 20000, "polMoney" : 20000, "votes" : 20000 }
+				,"description"		: "By controlling the money supply, the Reserve can influence the economy to benefit whichever politician it chooses."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
 				"name" 				: "Sludge Family Oil"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 50000000 }
-				,"perSecond" 		: {	"indMoney" : 200000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 200000 }
+				,"description"		: "A marriage between a Texan political family and a middle east oil family produced a massive oil tycoon dynasty."
 				,"labels"			: ["industry"]
-			}			
-			,{
+			},{
+				"name" 				: "The Grid"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 250000 }
+				,"description"		: "No, they don't produce lightcycles, but they do manage most of the world's electricity."
+				,"labels"			: ["industry"]
+			},{
+				"name" 				: "Bananana Gadgets"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 300000, "minds" : 50000 }
+				,"description"		: "These must-have phones and gadgets are only made in the world's top bananana republics"
+				,"labels"			: ["industry"]
+			},{
 				"name" 				: "10^100 OmniNet"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"indMoney" : 100000000 }
-				,"perSecond" 		: {	"indMoney" : 400000, "minds" : 50000, "medMoney" : 50000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 400000, "minds" : 50000, "medMoney" : 50000 }
+				,"description"		: "The network is everywhere, in all devices, constantly watching you and displaying creepily relevant ads."			
+				,"labels"			: ["industry"]
+			},{
+				"name" 				: "Terran Petroleum"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "indMoney"
+				,"output"			: {	"indMoney" : 600000 }
+				,"description"		: "They make sure that the Earth is robbed of all it's resources, sometimes spilling oil on purpose if it can't be sold fast enough."
 				,"labels"			: ["industry"]
 			}
 			
@@ -155,283 +159,299 @@
 			{
 				"name" 				: "Seductive Interns"
 				,"costMultiplier" 	: 1.3
-				,"baseCost" 		: {	"polMoney" : 24 }
-				,"perSecond" 		: {	"polMoney" : 1 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"polMoney" : 1 }
 				,"description"		: "Seductive interns are excellent are raising funds and raising spirits. Expenses include cigars and dry-cleaning."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Robo-Dialer"
 				,"costMultiplier" 	: 1.4
-				,"baseCost" 		: {	"polMoney" : 30 }
-				,"perSecond" 		: {	"votes" : 1 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 1 }
 				,"description"		: "Robo-Dialer can't be reasoned with; it doesn't feel pity, or remorse, or fear; and it absolutely will not stop."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Alpha Sigma Sigma"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 200 }
-				,"perSecond" 		: {	"votes" : 1, "polMoney" : 2 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 1, "polMoney" : 2 }
 				,"description"		: "Fraternity brothers help raise money and get the vote out."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Local Corrupt Politicians"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 700 }
-				,"perSecond" 		: {	"votes" : 3, "polMoney" : 1, "indMoney" : 1, "medMoney" : 1 }
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 3, "polMoney" : 1, "indMoney" : 1, "medMoney" : 1 }
 				,"description"		: "They won't get anything notable accomplished, but they'll make people think democracy works."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Megalomaniac Mayors"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 1200 }
-				,"perSecond" 		: {	"votes" : 10 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 10 }
+				,"description"		: "This loose alliance of mayors is mostly fueled by drug binges."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Secret Mistresses"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 1500 }
-				,"perSecond" 		: {	"votes" : 6, "minds" : 5, "medMoney" : 1 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 6, "minds" : 5, "medMoney" : 1 }
 				,"description"		: "These loose women help to bring scandal to opponents and dominate news stories."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Irresponsible Deregulation"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 3600 }
-				,"perSecond" 		: {	"indMoney" : 20, "medMoney" : 10 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"indMoney" : 20, "medMoney" : 10 }
+				,"description"		: "Removing regulation on key businesses helps profits to soar!"
 				,"labels"			: ["politics"]
-			}			
-			,{
+			},{
 				"name" 				: "League of Governors"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 7200 }
-				,"perSecond" 		: {	"votes" : 60 }
-				,"description"		: ""
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 60 }
+				,"description"		: "The governors gather monthly in a giant, dark, helmet-shaped fortress in a shady swamp."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Dangerous Deregulation"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 12000 }
-				,"perSecond" 		: {	"indMoney" : 50, "medMoney" : 50 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"indMoney" : 50, "medMoney" : 50 }
+				,"description"		: "We still found some more regulations to remove. Every man for themselves!"
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Bohemian Field"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 20400 }
-				,"perSecond" 		: {	"votes" : 120, "polMoney" : 50 }
-				,"description"		: ""
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 250, "polMoney" : 50 }
+				,"description"		: "This unassuming patch of grass is also a secret meetingplace for the world's elite powerbrokers."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Crooked Congressmen"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 140000 }
-				,"perSecond" 		: {	"votes" : 700, "polMoney" : 200, "indMoney" : 50, "medMoney" : 50 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 700, "polMoney" : 200, "indMoney" : 50, "medMoney" : 50 }
+				,"description"		: "Constant campaigning means they have little time for writing laws, but the one's they do write are completely self-serving."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Sinister Senators"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 200000 }
-				,"perSecond" 		: {	"votes" : 1600 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 2000 }
+				,"description"		: "These politicians focus entirely on consolidating political power."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Freebuilders Guild"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 500000 }
-				,"perSecond" 		: {	"votes" : 1500, "minds" : 250, "polMoney" : 250 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 1500, "minds" : 200, "polMoney" : 1500 }
 				,"description"		: "The Freebuilders are a secret society based on Minecraft masonry. Block by block they have dominated international politics."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "Presidential Candidates"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 2000000 }
-				,"perSecond" 		: {	"votes" : 10000, "minds" : 1000 }
-				,"description"		: "One of these fine men will become president, and it won't matter who as long as we control them all."
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 10000, "minds" : 1000 }
+				,"description"		: "One of these fine people will become president, and it won't matter who as long as we control them all."
 				,"labels"			: ["politics"]
-			}			
-			,{
+			},{
+				"name" 				: "\"Fake News\""
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 10000, "medMoney" : 10000 }
+				,"description"		: "The ability to instantly discredit oppositional news agencies as 'fake news' helps to win votes and provide profits to friendly news media."
+				,"labels"			: ["politics"]
+			},{
 				"name" 				: "National Republicrat Party"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 10000000 }
-				,"perSecond" 		: {	"votes" : 30000, "polMoney" : 20000, "indMoney" : 5000 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 30000, "polMoney" : 20000, "indMoney" : 5000 }
 				,"description"		: "We are against those things that everyone hates! Paid for by the campaign to elect Jack Johnson."
 				,"labels"			: ["politics"]
-			}
-			,{
+			},{
 				"name" 				: "National Demopublican Party"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"polMoney" : 10000000 }
-				,"perSecond" 		: {	"votes" : 20000, "polMoney" : 30000, "medMoney" : 5000 }
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 20000, "polMoney" : 30000, "medMoney" : 5000 }
 				,"description"		: "We agree with everything our opponents stand for! Paid for by the campaign to elect John Jackson."
 				,"labels"			: ["politics"]
-			}
-			,{
-				"name" 				: "The President"
+			},{
+				"name" 				: "Puppet President"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 66000000 }
-				,"perSecond" 		: {	"votes" : 200000, "polMoney" : 100000, "medMoney" : 30000, "indMoney" : 30000 }
-				,"description"		: ""
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 200000, "polMoney" : 100000, "medMoney" : 30000, "indMoney" : 30000 }
+				,"description"		: "Combine greed, lack of moral compass, and a hefty dose of blackmail and you've got yourself control of the Presidency."
+				,"labels"			: ["politics"]
+			},{
+				"name" 				: "Politcal Dynasty"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 400000 }
+				,"description"		: "Why let someone new run for office when you can have Dear Leader's relative? No need to learn a new last name."
+				,"labels"			: ["politics"]
+			},{
+				"name" 				: "M.A.D."
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "polMoney"
+				,"output"			: {	"votes" : 400000, "minds" : 100000 }
+				,"description"		: "Mutually Assured Domination -- the threat of nuclear destruction will help to unite the world in fear."
+				,"labels"			: ["politics"]
+			},{
+				"name" 				: "New World Order"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"votes" : 200000, "polMoney" : 200000, "medMoney" : 100000, "indMoney" : 100000 }
+				,"description"		: "Tear away the old order and replace it with your conspiracy's new, global order."
 				,"labels"			: ["politics"]
 			}			
 		]
 		,"media" : [
 			{
-				"name" 				: "Rogue Blogger Network"
+				"name" 				: "Dank Memes"
 				,"costMultiplier" 	: 1.3
-				,"baseCost" 		: {	"medMoney" : 12 }
-				,"perSecond" 		: {	"minds" : 0.5, "medMoney" : 0.1 }
-				,"description"		: "Beyond Top Secret .net"			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 0.5 }
+				,"description"		: "Combining viral memes together to create the dankest masterpieces."
 				,"labels"			: ["media"]
-			}		
-			,{
-				"name" 				: "Subversive Spam"
+			},{
+				"name" 				: "Rogue Blogger Network"
 				,"costMultiplier" 	: 1.4
-				,"baseCost" 		: {	"medMoney" : 180 }
-				,"perSecond" 		: {	"minds" : 0.5, "medMoney" : 2 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 0.5, "medMoney" : 0.5 }
+				,"description"		: "So Beyond Top Secret .net"
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
+				"name" 				: "Subversive Spam"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 0.5, "medMoney" : 2 }
+				,"description"		: "Spam written by former Nigerian princes posing as sexy rebels who know the 'truth' about the government."
+				,"labels"			: ["media"]
+			},{
 				"name" 				: "'Shore to Shore' Radio"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 500 }
-				,"perSecond" 		: {	"minds" : 4, "medMoney" : 1 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 4, "medMoney" : 1 }
+				,"description"		: "Radio shows so loud and angry at the world, that they are audible across the country."			
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Newsstands"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 940 }
-				,"perSecond" 		: {	"medMoney" : 4, "minds" : 4 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 4, "minds" : 4 }
+				,"description"		: "Targeting the few remaining people that still get their news from writing printed on dead trees."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Subliminal Advertising"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"minds" : 1000 }
-				,"perSecond" 		: {	"indMoney" : 6, "medMoney" : 2 }
-				,"description"		: ""			
+				,"costCurrencyName" : "minds"
+				,"output"			: {	"indMoney" : 6, "medMoney" : 4 }
+				,"description"		: "No need to watch long ads when they can just be flashed right into your unconscious mind. 'BUY BUY BUY'"
 				,"labels"			: ["media"]
-			}
-			,{
-				"name" 				: "Reality Shows"
+			},{
+				"name" 				: "Cutthroat Reality Shows"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"minds" : 2000 }
-				,"perSecond" 		: {	"minds" : 15, "medMoney" : 1 }
-				,"description"		: ""			
+				,"costCurrencyName" : "minds"
+				,"output"			: {	"minds" : 15, "medMoney" : 1 }
+				,"description"		: "Who knows - maybe one of these stars can become the next puppet president!"			
 				,"labels"			: ["media"]
-			}			
-			,{
+			},{
 				"name" 				: "World of Spycraft"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 6000 }
-				,"perSecond" 		: {	"medMoney" : 20, "minds" : 30 }
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 20, "minds" : 30 }
 				,"description"		: "This MMO game allows citizen to mindless grind in a virtual world while spy agencies observe every detail."			
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Ultra GameBox MK"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 10200 }
-				,"perSecond" 		: {	"medMoney" : 35, "minds" : 50 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 35, "minds" : 50 }
+				,"description"		: "Video games so high-def and well simulated that they feel like hallucinations. Or is it the other way around?"
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Xenophobic TV Hosts"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 15000 }
-				,"perSecond" 		: {	"medMoney" : 25, "minds" : 100 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 25, "minds" : 100 }
+				,"description"		: "Some are young, some are old, but they all hate people who look and speak different."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Blowhard Radio Show"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 24000 }
-				,"perSecond" 		: {	"medMoney" : 50, "minds" : 150 }
-				,"description"		: ""
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 150, "minds" : 150 }
+				,"description"		: "These ugly men promote themselves as much as they promote the latest conspiracy theories."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
+				"name" 				: "EyeTube"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 500 }
+				,"description"		: "While you watch the miriad of videos, EyeTube watches back."
+				,"labels"			: ["media"]
+			},{
+				"name" 				: "Alternative Facts"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"votes" : 50, "minds" : 650 }
+				,"description"		: "'Wait... this whole time we could have just printed complete lies? This changes everything.'"
+				,"labels"			: ["media"]
+			},{
 				"name" 				: "Rockefelberg News"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 50000 }
-				,"perSecond" 		: {	"indMoney" : 100, "medMoney" : 100, "minds" : 100 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"indMoney" : 600, "medMoney" : 400 }
+				,"description"		: "Pro-Big-business news articles from around the globe."			
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Election Attack Ads"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"minds" : 50000 }
-				,"perSecond" 		: {	"votes" : 250, "minds" : 50 }
-				,"description"		: ""			
+				,"costCurrencyName" : "minds"
+				,"output"			: {	"votes" : 2500, "minds" : 500 }
+				,"description"		: "Remind the public of every bad thing that anyone has suggested about your opponents."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Hollywood Films"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 120000 }
-				,"perSecond" 		: {	"minds" : 300, "medMoney" : 500 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 10000 }
+				,"description"		: "Violence, sex, and comic book characters are three things that never get old and always turns a profit."
 				,"labels"			: ["media"]
-			}
-			,{
-				"name" 				: "BrainBook"
-				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 1000000 }
-				,"perSecond" 		: {	"minds" : 4500, "indMoney" : 500, "medMoney" : 500 }
-				,"description"		: ""			
-				,"labels"			: ["media"]
-			}			
-			,{
+			},{
 				"name" 				: "Foxy 21 News"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 2500000 }
-				,"perSecond" 		: {	"votes" : 5000, "minds" : 5000, "medMoney" : 4000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"votes" : 5000, "minds" : 5000, "medMoney" : 15000 }
+				,"description"		: "Funneling factory-produced blonde bigots into TV studios provides entertainment news for the masses."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Happy Rat Conglomerate"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 5000000 }
-				,"perSecond" 		: {	"minds" : 15000, "medMoney" : 10000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 150000, "medMoney" : 100000 }
+				,"description"		: "The company founded on a cartoon of a dancing rat slowly controls every entertainment I.P. imaginable."
 				,"labels"			: ["media"]
-			}
-			,{
+			},{
 				"name" 				: "Time-Weiner Media Group"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"medMoney" : 5000000 }
-				,"perSecond" 		: {	"minds" : 10000, "medMoney" : 15000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"medMoney" : 300000 }
+				,"description"		: "This conglomerate controls news media and movies, but mainly focuses on nude photos of celebrities and politicians."
 				,"labels"			: ["media"]
-			}			
-			,{
+			},{
+				"name" 				: "BrainBook"
+				,"costMultiplier" 	: 1.5
+				,"costCurrencyName" : "medMoney"
+				,"output"			: {	"minds" : 200000, "medMoney": 200000 }
+				,"description"		: "Plug your brain in to a constant stream of political rants and pet photos."	
+				,"labels"			: ["media"]
+			},{
 				"name" 				: "Internet Censorship"
 				,"costMultiplier" 	: 1.5
-				,"baseCost" 		: {	"votes" : 10000000 }
-				,"perSecond" 		: {	"minds" : 40000, "votes" : 15000 }
-				,"description"		: ""			
+				,"costCurrencyName" : "votes"
+				,"output"			: {	"minds" : 500000, "votes" : 100000 }
+				,"description"		: "Who needs boring 'Net Neutrality', when we can have exciting Net Lawful-Evilness? Control of all rival information is cut off."			
 				,"labels"			: ["media"]
 			}			
 		]
